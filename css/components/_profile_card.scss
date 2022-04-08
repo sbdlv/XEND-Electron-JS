@@ -1,0 +1,26 @@
+.profile_card{
+    background-color: $chat-bg;
+    border-radius: $border-radius;
+    margin: 18px;
+    display: flex;
+    align-items: center;
+    padding: 16px;
+
+    &__pfp{
+        @include pfp(55px);
+    }
+
+    &__info{
+        margin-left: 14px;
+
+        &__name{
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        &__at{
+            font-size: 14px;
+            color: $text-grey;
+        }
+    }
+}

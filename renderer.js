@@ -63,6 +63,10 @@ function chatWith2() {
   chat("usuario2", "Hola usuario2");
 }
 
+function chatWith1() {
+  chat("usuario1", "Hola usuario1");
+}
+
 function loginAs1() {
   xmpp = login("usuario1", "usuario");
 }
@@ -76,4 +80,4 @@ function loginAs2() {
 
 //Main
 loginAs1();
-loginAs2();
+//loginAs2();

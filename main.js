@@ -1,5 +1,5 @@
 // main.js
-
+process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 // Modules to control application life and create native browser window
 const { app, BrowserWindow } = require('electron')
 const path = require('path')

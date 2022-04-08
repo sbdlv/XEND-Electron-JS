@@ -1,0 +1,12 @@
+.chats_list{
+    display: flex;
+    flex-direction: column;
+    
+    &__title{
+        margin-left: 18px;
+        font-size: 14px;
+        font-weight: bold;
+        color: $text-grey;
+        margin-bottom: 8px;
+    }
+}

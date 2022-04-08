@@ -4,7 +4,7 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "start": "export NODE_TLS_REJECT_UNAUTHORIZED='0' && electron ."
+    "start": "electron ."
   },
   "author": "",
   "license": "ISC",

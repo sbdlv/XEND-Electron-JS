@@ -1,0 +1,6 @@
+@mixin pfp($size: 48px) {
+    object-fit: cover;
+    border-radius: $border-radius;
+    height: $size;
+    width: $size;
+}

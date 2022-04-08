@@ -1,0 +1,27 @@
+.chats_list_item {
+    display: flex;
+    align-items: center;
+    padding: 12px 21px;
+
+    &--active {
+        background-color: $chat-bg;
+    }
+
+    &__pfp {
+        @include pfp(48px);
+    }
+
+    &__info {
+        margin-left: 14px;
+
+        &__name {
+            font-size: 16px;
+            margin-bottom: 2px;
+        }
+
+        &__msg {
+            font-size: 14px;
+            color: $text-grey;
+        }
+    }
+}

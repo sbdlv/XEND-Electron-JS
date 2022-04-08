@@ -1,0 +1,21 @@
+.chat_bubble{
+    border-radius: $border-radius;
+    border-top-right-radius: 0;
+    background-color: $color-primary;
+    color: $color-white;
+    padding: 12px;
+    margin-bottom: 20px;
+    max-width: 80%;
+
+    align-self: flex-end;
+    
+    &--remote{
+        background-color: $bubble-remote;
+        border-top-right-radius: $border-radius;
+        border-top-left-radius: 0;
+        color: black;
+
+        align-self: flex-start;
+    }
+
+}

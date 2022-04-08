@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="52.626156mm"
+   height="52.626156mm"
+   viewBox="0 0 52.626155 52.626156"
+   version="1.1"
+   id="svg5"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs2">
+    <linearGradient
+       id="linearGradient1034">
+      <stop
+         style="stop-color:#00d2ff;stop-opacity:1"
+         offset="0"
+         id="stop1030" />
+      <stop
+         style="stop-color:#3a47d5;stop-opacity:1"
+         offset="1"
+         id="stop1032" />
+    </linearGradient>
+    <marker
+       style="overflow:visible"
+       id="Tail"
+       refX="0"
+       refY="0"
+       orient="auto">
+      <g
+         transform="scale(-1.2)"
+         id="g1647">
+        <path
+           style="fill:none;fill-rule:evenodd;stroke:context-stroke;stroke-width:0.8;stroke-linecap:round"
+           d="M -3.8048674,-3.9585227 0.54352094,0"
+           id="path1635" />
+        <path
+           style="fill:none;fill-rule:evenodd;stroke:context-stroke;stroke-width:0.8;stroke-linecap:round"
+           d="M -1.2866832,-3.9585227 3.0617053,0"
+           id="path1637" />
+        <path
+           style="fill:none;fill-rule:evenodd;stroke:context-stroke;stroke-width:0.8;stroke-linecap:round"
+           d="M 1.3053582,-3.9585227 5.6537466,0"
+           id="path1639" />
+        <path
+           style="fill:none;fill-rule:evenodd;stroke:context-stroke;stroke-width:0.8;stroke-linecap:round"
+           d="M -3.8048674,4.1775838 0.54352094,0.21974226"
+           id="path1641" />
+        <path
+           style="fill:none;fill-rule:evenodd;stroke:context-stroke;stroke-width:0.8;stroke-linecap:round"
+           d="M -1.2866832,4.1775838 3.0617053,0.21974226"
+           id="path1643" />
+        <path
+           style="fill:none;fill-rule:evenodd;stroke:context-stroke;stroke-width:0.8;stroke-linecap:round"
+           d="M 1.3053582,4.1775838 5.6537466,0.21974226"
+           id="path1645" />
+      </g>
+    </marker>
+    <linearGradient
+       xlink:href="#linearGradient1034"
+       id="linearGradient2190"
+       x1="83.548119"
+       y1="99.200546"
+       x2="83.548119"
+       y2="151.49106"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <g
+     id="layer1"
+     transform="translate(-55.871487,-98.916)">
+    <rect
+       style="fill:url(#linearGradient2190);fill-opacity:1;stroke:none;stroke-width:0.290513;stroke-linecap:round;stroke-linejoin:round;paint-order:markers fill stroke"
+       id="rect912"
+       width="52.626156"
+       height="52.626156"
+       x="55.871487"
+       y="98.916"
+       ry="6.6145835"
+       rx="6.6145835" />
+    <g
+       id="g998"
+       transform="translate(41.033484,31.68628)">
+      <path
+         style="fill:none;stroke:#ffffff;stroke-width:2.98205;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 44.521536,104.31054 h 11.01352"
+         id="path1052-3" />
+      <path
+         style="fill:none;stroke:#ffffff;stroke-width:2.98205;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="m 44.521536,93.542798 h 11.01352"
+         id="path2906" />
+      <path
+         style="fill:none;stroke:#ffffff;stroke-width:2.98205;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="M 44.521536,82.775063 H 55.535053"
+         id="path2908" />
+      <path
+         style="fill:none;stroke:#ffffff;stroke-width:2.95228;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+         d="M 26.75222,82.760182 37.534839,93.542801 26.75222,104.32542"
+         id="path2429" />
+    </g>
+  </g>
+</svg>
