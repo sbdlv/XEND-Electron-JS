@@ -27,7 +27,7 @@ main #chat, main #sidebar {
 #chat {
   display: flex;
   flex-direction: column;
-  background-color: #FAFAFA;
+  background-color: #fafafa;
   height: 100%;
   flex-grow: 1;
 }
@@ -52,13 +52,32 @@ main #chat, main #sidebar {
   width: 100%;
 }
 #chat__area__input input::placeholder {
-  color: #7C7C7C;
+  color: #7c7c7c;
+}
+
+.icon_button {
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  border: none;
+  background-color: transparent;
+  padding: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #7c7c7c;
+  transition: all 0.25s;
+}
+.icon_button:hover {
+  background-color: #f5f5f5;
+  cursor: pointer;
+  color: black;
 }
 
 .chat_bubble {
   border-radius: 15px;
   border-top-right-radius: 0;
-  background-color: #0177CB;
+  background-color: #0177cb;
   color: white;
   padding: 12px;
   margin-bottom: 20px;
@@ -66,7 +85,7 @@ main #chat, main #sidebar {
   align-self: flex-end;
 }
 .chat_bubble--remote {
-  background-color: #EAECEE;
+  background-color: #eaecee;
   border-top-right-radius: 15px;
   border-top-left-radius: 0;
   color: black;
@@ -74,7 +93,7 @@ main #chat, main #sidebar {
 }
 
 .profile_card {
-  background-color: #FAFAFA;
+  background-color: #f5f5f5;
   border-radius: 15px;
   margin: 18px;
   display: flex;
@@ -96,7 +115,7 @@ main #chat, main #sidebar {
 }
 .profile_card__info__at {
   font-size: 14px;
-  color: #7C7C7C;
+  color: #7c7c7c;
 }
 
 .chats_list {
@@ -107,7 +126,7 @@ main #chat, main #sidebar {
   margin-left: 18px;
   font-size: 14px;
   font-weight: bold;
-  color: #7C7C7C;
+  color: #7c7c7c;
   margin-bottom: 8px;
 }
 
@@ -117,7 +136,9 @@ main #chat, main #sidebar {
   padding: 12px 21px;
 }
 .chats_list_item--active {
-  background-color: #FAFAFA;
+  background-color: #fafafa;
+  border-top: 1px solid #e6e6e6;
+  border-bottom: 1px solid #e6e6e6;
 }
 .chats_list_item__pfp {
   object-fit: cover;
@@ -134,7 +155,7 @@ main #chat, main #sidebar {
 }
 .chats_list_item__info__msg {
   font-size: 14px;
-  color: #7C7C7C;
+  color: #7c7c7c;
 }
 
 .chat_top_bar {
@@ -165,7 +186,14 @@ main #chat, main #sidebar {
 }
 .chat_top_bar__info__user__at {
   font-size: 14px;
-  color: #7C7C7C;
+  color: #7c7c7c;
+}
+.chat_top_bar__options {
+  display: flex;
+  align-items: center;
+}
+.chat_top_bar__options .icon_button {
+  margin: 0 5px;
 }
 
 /*# sourceMappingURL=style.css.map */

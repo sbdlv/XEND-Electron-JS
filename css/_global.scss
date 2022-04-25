@@ -12,3 +12,7 @@ body{
 input{
     border: 1px solid $border-1;
 }
+
+.gradient_bg{
+    background: linear-gradient(180deg, #00d2ff 0%, #3a47d5 100%);
+}

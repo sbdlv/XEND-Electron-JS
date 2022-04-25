@@ -31,4 +31,13 @@
             }
         }
     }
+
+    &__options{
+        display: flex;
+        align-items: center;
+
+        .icon_button{
+            margin: 0 5px;
+        }
+    }
 }

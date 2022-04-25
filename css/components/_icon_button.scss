@@ -1,0 +1,21 @@
+.icon_button{
+    width: 30px;
+    height: 30px;
+    border-radius: $border-radius;
+
+    border: none;
+    background-color: transparent;
+    padding: 5px;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $text-grey;
+    transition: all .25s;
+
+    &:hover{
+        background-color: $bg-dark-1;
+        cursor: pointer;
+        color: black;
+    }
+}
