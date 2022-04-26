@@ -7,7 +7,6 @@
     flex-grow: 1;
 
     &__area{
-        padding: 20px;
         height: 100%;
         //flex-grow: 1;
         //position: relative;
@@ -15,19 +14,21 @@
         display: flex;
         flex-direction: column;
         justify-content: space-between;
-
+        overflow: hidden;
+        
         &__timeline{
+            padding: 20px;
             display: flex;
             flex-direction: column;
-            height: 80%;
-            max-height: 80%;
             overflow-y: auto;
+            scrollbar-gutter: stable;
         }
         
         &__input{
             // position: absolute;
             // bottom: 0;
             // max-height: 20%;
+            margin: 10px;
             input{
                 padding: 12px 20px;
                 border-radius: $border-radius;

@@ -1,7 +1,7 @@
 // main.js
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, ipcRenderer } = require('electron')
 const path = require('path')
 
 //XMPP imports
@@ -9,14 +9,8 @@ const { client, xml } = require("@xmpp/client");
 const { jid } = require("@xmpp/jid");
 const debug = require("@xmpp/debug");
 
-const MessagesManager = require("./src/class/MessagesManager");
-
+//Properties
 let xmpp_connection;
-
-/**
- * @type { MessagesManager }
- */
-let mgr = null;
 
 const createWindow = () => {
     // Create the browser window.
@@ -37,6 +31,8 @@ const createWindow = () => {
 
     mainWindow.webContents.openDevTools()
 
+    return mainWindow;
+
     // Open the DevTools.
     // mainWindow.webContents.openDevTools()
 }
@@ -55,35 +51,34 @@ app.whenReady().then(() => {
     xmpp_connection.on("online", () => {
         xmpp_connection.send(xml("presence"));
         console.log("XMPP connection successful!");
-        createWindow();
+        let mainWindow = createWindow(xmpp_connection);
+
+        //Redirect incoming messages to renderer
+        xmpp_connection.on("stanza", async (stanza) => {
+            if(stanza.is("message")){
+                let processedMessage = {
+                    from: stanza.attrs.from.substr(0, stanza.attrs.from.indexOf("/")),
+                    body: stanza.children[0].children[0]
+                }
+                mainWindow.webContents.send("new-message", processedMessage);
+            }
+        });
     });
 
-    // xmpp_connection.on("stanza", async (stanza) => {
-    //     if (stanza.is("message")) {
-    //         console.log("NEW MESSAGE: .");
-    //         console.log(stanza);
-    //     }
+    // xmpp_connection.on("input", async (stanza) => {
+    //     console.log("NEW INPUT:");
+    //     console.log(stanza);
     // });
 
-    xmpp_connection.on("input", async (stanza) => {
-        console.log("NEW INPUT:");
-        console.log(stanza);
-    });
-
-    
     app.on('activate', () => {
         // On macOS it's common to re-create a window in the app when the
         // dock icon is clicked and there are no other windows open.
         if (BrowserWindow.getAllWindows().length === 0) createWindow()
     })
-    
-    mgr = new MessagesManager(xmpp_connection);
 
     //Register IPC Handlers
     ipcMain.handle("chat:send", handleChatSend);
-    ipcMain.handle("get:mgr", getMgr);
-    ipcMain.handle("mgr:adde", mgr_adde);
-    
+
     xmpp_connection.start().catch(console.error);
 })
 
@@ -105,14 +100,4 @@ function handleChatSend(username, msg) {
         console.log("ERROR SENDING MSG:");
         console.log(e);
     });
-}
-
-async function mgr_adde(eFun) {
-    mgr.addEventListener("incoming", eFun);
-    return true;
-}
-
-async function getMgr(){
-    console.log(mgr);
-    return mgr;
 }
