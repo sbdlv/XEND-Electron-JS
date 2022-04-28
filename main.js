@@ -10,6 +10,9 @@ const { jid } = require("@xmpp/jid");
 const debug = require("@xmpp/debug");
 
 //Properties
+/**
+ * @type {import('@xmpp/client').Client}
+ */
 let xmpp_connection;
 
 const createWindow = () => {
@@ -55,12 +58,15 @@ app.whenReady().then(() => {
 
         //Redirect incoming messages to renderer
         xmpp_connection.on("stanza", async (stanza) => {
-            if(stanza.is("message")){
+            if (stanza.is("message")) {
                 let processedMessage = {
                     from: stanza.attrs.from.substr(0, stanza.attrs.from.indexOf("/")),
                     body: stanza.children[0].children[0]
                 }
                 mainWindow.webContents.send("new-message", processedMessage);
+            } else {
+                console.log("UNKNOWN STANZA");
+                //console.log(stanza);
             }
         });
     });
@@ -78,6 +84,7 @@ app.whenReady().then(() => {
 
     //Register IPC Handlers
     ipcMain.handle("chat:send", handleChatSend);
+    ipcMain.handle("xmpp:get:vcard", handleGetVCard);
 
     xmpp_connection.start().catch(console.error);
 })
@@ -100,4 +107,21 @@ function handleChatSend(username, msg) {
         console.log("ERROR SENDING MSG:");
         console.log(e);
     });
+}
+
+async function handleGetVCard(user) {
+    return await xmpp_connection.sendReceive(xml(
+        "iq",
+        {
+            from: user,
+            id: 'v1',
+            type: "get"
+        },
+        xml(
+            "vCard",
+            {
+                xmlns: 'vcard-temp'
+            }
+        )
+    ));
 }

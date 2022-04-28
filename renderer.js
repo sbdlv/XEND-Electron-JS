@@ -1,8 +1,6 @@
 let chatListItems = $("#chats_list_items");
 let chattingWith = "";
 
-console.log(chatListItems);
-
 function chat(msg) {
   console.log(window.xendAPI.chatWith("usuario2", msg));
 }
