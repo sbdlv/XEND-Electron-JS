@@ -5,8 +5,32 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
-<body class="gradient_bg">
-    
+<body>
+    <form action="" class="login-form">
+        <div class="powered_by">
+            <img src="img/logo_and_name.svg" alt="">
+        </div>
+        <div class="form-group">
+            <label for="username">Usuario</label>
+            <input type="text" placeholder="user@xend.org">
+        </div>
+        <div class="form-group">
+            <label for="username">Contraseña</label>
+            <input type="text" placeholder="">
+        </div>
+        <div class="server-fields">
+            <div class="form-group">
+                <label for="username">Servidor</label>
+                <input type="text" placeholder="xend.org">
+            </div>
+            <div class="form-group">
+                <label for="username">Puerto</label>
+                <input type="number" placeholder="5222" min="1">
+            </div>
+        </div>
+        <button class="btn btn--primary">Iniciar sesión</button>
+    </form>
 </body>
 </html>

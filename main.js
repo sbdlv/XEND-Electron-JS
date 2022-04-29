@@ -14,10 +14,11 @@ const debug = require("@xmpp/debug");
  * @type {import('@xmpp/client').Client}
  */
 let xmpp_connection;
+let mainWindow;
 
 const createWindow = () => {
     // Create the browser window.
-    const mainWindow = new BrowserWindow({
+    mainWindow = new BrowserWindow({
         width: 1280,
         height: 720,
         minWidth: 550,

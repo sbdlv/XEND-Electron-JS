@@ -1,0 +1,43 @@
+.login-form{
+    border: 1px solid $border-1;
+    max-width: 550px;
+    margin: 0 auto;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
+    padding: 40px;
+
+    border-radius: $border-radius;
+    background-color: $bg-white;
+
+    .powered_by{
+        position: absolute;
+        top: -50px;
+        display: flex;
+        justify-content: center;
+        left: 0;
+        right: 0;
+        img{
+            height: 30px;
+        }
+    }
+
+    button{
+        width: 100%;
+    }
+
+    .server-fields{
+        display: flex;
+
+        .form-group:first-of-type{
+            flex-grow: 1;
+            margin-right: 20px;
+        }
+        .form-group:last-of-type{
+            width: 35%;
+        }
+    }
+}
+

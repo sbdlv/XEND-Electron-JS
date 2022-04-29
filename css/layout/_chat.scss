@@ -30,14 +30,7 @@
             // max-height: 20%;
             margin: 10px;
             input{
-                padding: 12px 20px;
-                border-radius: $border-radius;
-                background-color: $bg-white;
                 width: 100%;
-
-                &::placeholder{
-                    color: $text-grey;
-                }
             }
         }
     }
