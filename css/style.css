@@ -21,7 +21,7 @@ input::placeholder {
 
 *::-webkit-scrollbar {
   display: block;
-  width: 16px;
+  width: 14px;
 }
 
 *::-webkit-scrollbar-button {
@@ -51,15 +51,18 @@ input::placeholder {
   border: none;
   transition: all 0.25s;
 }
-.btn:hover {
+.btn:hover:not(:disabled) {
   cursor: pointer;
 }
 .btn--primary {
   color: white;
   background-color: #0177cb;
 }
-.btn--primary:hover {
+.btn--primary:hover:not(:disabled) {
   background-color: #016ab6;
+}
+.btn:disabled {
+  background-color: #bfbfbf;
 }
 
 main {
@@ -72,6 +75,7 @@ main #chat, main #sidebar {
 #sidebar {
   width: 340px;
   border-right: 1px solid #e6e6e6;
+  background-color: white;
 }
 
 #chat {
@@ -288,6 +292,20 @@ main #chat, main #sidebar {
 }
 .login-form .server-fields .form-group:last-of-type {
   width: 35%;
+}
+.login-form .form-group .input-extra-button {
+  position: relative;
+}
+.login-form .form-group .input-extra-button .icon_button {
+  position: absolute;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M15 12a3 3 0 11-6 0 3 3 0 016 0z' /%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z' /%3E%3C/svg%3E");
+  background-size: 25px 25px;
+  background-repeat: no-repeat;
+  background-position: center;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  background-color: #7c7c7c;
 }
 
 .form-group {

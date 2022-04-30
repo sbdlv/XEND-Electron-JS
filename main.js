@@ -14,6 +14,7 @@ const debug = require("@xmpp/debug");
  * @type {import('@xmpp/client').Client}
  */
 let xmpp_connection;
+let current_user_at;
 let mainWindow;
 
 const createWindow = () => {
@@ -31,7 +32,7 @@ const createWindow = () => {
     })
 
     // and load the index.html of the app.
-    mainWindow.loadFile('chat.html')
+    mainWindow.loadFile('login.html')
 
     mainWindow.webContents.openDevTools()
 
@@ -45,38 +46,6 @@ const createWindow = () => {
 // initialization and is ready to create browser windows.
 // Algunas APIs pueden solamente ser usadas despues de que este evento ocurra.
 app.whenReady().then(() => {
-    xmpp_connection = client({
-        service: "xmpp://localhost:5222",
-        domain: "xend",
-        username: "usuario1",
-        password: "usuario",
-    });
-
-    xmpp_connection.on("online", () => {
-        xmpp_connection.send(xml("presence"));
-        console.log("XMPP connection successful!");
-        let mainWindow = createWindow(xmpp_connection);
-
-        //Redirect incoming messages to renderer
-        xmpp_connection.on("stanza", async (stanza) => {
-            if (stanza.is("message")) {
-                let processedMessage = {
-                    from: stanza.attrs.from.substr(0, stanza.attrs.from.indexOf("/")),
-                    body: stanza.children[0].children[0]
-                }
-                mainWindow.webContents.send("new-message", processedMessage);
-            } else {
-                console.log("UNKNOWN STANZA");
-                //console.log(stanza);
-            }
-        });
-    });
-
-    // xmpp_connection.on("input", async (stanza) => {
-    //     console.log("NEW INPUT:");
-    //     console.log(stanza);
-    // });
-
     app.on('activate', () => {
         // On macOS it's common to re-create a window in the app when the
         // dock icon is clicked and there are no other windows open.
@@ -86,8 +55,9 @@ app.whenReady().then(() => {
     //Register IPC Handlers
     ipcMain.handle("chat:send", handleChatSend);
     ipcMain.handle("xmpp:get:vcard", handleGetVCard);
+    ipcMain.handle("xmpp:login", handleXMPPLogin);
 
-    xmpp_connection.start().catch(console.error);
+    createWindow();
 })
 
 // Quit when all windows are closed, except on macOS. There, it's common
@@ -110,12 +80,13 @@ function handleChatSend(username, msg) {
     });
 }
 
-async function handleGetVCard(user) {
+async function handleGetVCard(event, user) {
     return await xmpp_connection.sendReceive(xml(
         "iq",
         {
-            from: user,
-            id: 'v1',
+            from: current_user_at,
+            id: 'v3',
+            to: user,
             type: "get"
         },
         xml(
@@ -125,4 +96,44 @@ async function handleGetVCard(user) {
             }
         )
     ));
+}
+
+async function handleXMPPLogin(event, user, domain, password, server, port) {
+    console.log(user);
+
+    xmpp_connection = client({
+        service: `xmpp://${server}:${port}`,
+        domain: domain,
+        username: user,
+        password: password,
+    });
+
+    //Setup listeners
+
+    xmpp_connection.on("online", () => {
+        current_user_at = `${user}@${domain}`;
+        xmpp_connection.send(xml("presence"));
+        console.log("XMPP connection successful!");
+        //let mainWindow = createWindow(xmpp_connection);
+
+        //Redirect incoming messages to renderer
+        xmpp_connection.on("stanza", async (stanza) => {
+            if (stanza.is("message")) {
+                let processedMessage = {
+                    from: stanza.attrs.from.substr(0, stanza.attrs.from.indexOf("/")),
+                    body: stanza.children[0].children[0]
+                }
+                mainWindow.webContents.send("new-message", processedMessage);
+            } else {
+                console.log("UNKNOWN STANZA");
+                //console.log(stanza);
+            }
+        });
+    });
+
+    await xmpp_connection.start();
+
+    mainWindow.loadFile("chat.html");
+
+    return true;
 }

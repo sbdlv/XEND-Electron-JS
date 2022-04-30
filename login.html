@@ -8,29 +8,35 @@
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <form action="" class="login-form">
+    <script src="./node_modules/jquery/dist/jquery.min.js"></script>
+    <div class="login-form">
         <div class="powered_by">
             <img src="img/logo_and_name.svg" alt="">
         </div>
         <div class="form-group">
             <label for="username">Usuario</label>
-            <input type="text" placeholder="user@xend.org">
+            <input type="text" placeholder="user@xend.org" id="user-and-domain" value="usuario1@xend">
         </div>
         <div class="form-group">
             <label for="username">Contraseña</label>
-            <input type="text" placeholder="">
+            <div class="input-extra-button">
+                <input type="password" placeholder="" id="password" value="usuario">
+                <div class="icon_button show-password"></div>
+            </div>
         </div>
         <div class="server-fields">
             <div class="form-group">
                 <label for="username">Servidor</label>
-                <input type="text" placeholder="xend.org">
+                <input type="text" placeholder="xend.org" id="server" value="localhost">
             </div>
             <div class="form-group">
                 <label for="username">Puerto</label>
-                <input type="number" placeholder="5222" min="1">
+                <input type="number" placeholder="5222" min="1" id="port" value="5222">
             </div>
         </div>
-        <button class="btn btn--primary">Iniciar sesión</button>
-    </form>
+        <button class="btn btn--primary" onclick="login(this)">Iniciar sesión</button>
+    </div>
+
+    <script src="js/renderers/login.js"></script>
 </body>
 </html>

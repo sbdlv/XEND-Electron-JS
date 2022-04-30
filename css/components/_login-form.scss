@@ -1,4 +1,4 @@
-.login-form{
+.login-form {
     border: 1px solid $border-1;
     max-width: 550px;
     margin: 0 auto;
@@ -12,32 +12,49 @@
     border-radius: $border-radius;
     background-color: $bg-white;
 
-    .powered_by{
+    .powered_by {
         position: absolute;
         top: -50px;
         display: flex;
         justify-content: center;
         left: 0;
         right: 0;
-        img{
+        img {
             height: 30px;
         }
     }
 
-    button{
+    button {
         width: 100%;
     }
 
-    .server-fields{
+    .server-fields {
         display: flex;
 
-        .form-group:first-of-type{
+        .form-group:first-of-type {
             flex-grow: 1;
             margin-right: 20px;
         }
-        .form-group:last-of-type{
+        .form-group:last-of-type {
             width: 35%;
         }
     }
-}
+    .form-group{
 
+        .input-extra-button {
+            position: relative;
+            .icon_button {
+                position: absolute;
+                background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M15 12a3 3 0 11-6 0 3 3 0 016 0z' /%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z' /%3E%3C/svg%3E");
+                background-size: 25px 25px;
+                background-repeat: no-repeat;
+                background-position: center;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                background-color: $text-grey;
+            }
+        }
+    }
+
+}

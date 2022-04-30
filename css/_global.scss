@@ -22,7 +22,7 @@ input {
 
 *::-webkit-scrollbar {
   display: block;
-  width: 16px;
+  width: 14px;
 }
 
 *::-webkit-scrollbar-button {
@@ -52,7 +52,7 @@ input {
   border: none;
   transition: all .25s;
 
-  &:hover {
+  &:hover:not(:disabled) {
     cursor: pointer;
   }
 
@@ -60,8 +60,12 @@ input {
     color: white;
     background-color: $color-primary;
 
-    &:hover {
+    &:hover:not(:disabled) {
       background-color: $color-primary-darken;
     }
+  }
+
+  &:disabled{
+    background-color: $color-disabled;
   }
 }
