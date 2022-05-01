@@ -14,18 +14,24 @@
     <script src="./node_modules/jquery/dist/jquery.min.js"></script>
     <main>
         <div id="sidebar">
-            <div class="profile_card">
+            <button class="profile_card">
                 <img class="profile_card__pfp" src="img/pfp1.jpg" alt="">
                 <div class="profile_card__info">
                     <div class="profile_card__info__name">Gabe Newell</div>
                     <div class="profile_card__info__at">gabe_newell@xend</div>
                 </div>
-            </div>
+            </button>
             <div class="chats_list">
-                <h2 class="chats_list__title">Chats</h2>
+                <div class="chats_list__header">
+                    <h2 class="chats_list__title">Chats</h2>
+                    <button title="Nueva conversación"  type="button" class="icon_button chats_list__new-chat"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                        </svg></button>
+                </div>
                 <div class="chats_list__items" id="chats_list_items">
                     <button class="chats_list_item" onclick="changeChat(this)" data-user="test1@xend">
-                        <img src="img/pfp2.jpg" alt="" class="chats_list_item__pfp">
+                        <img src="" alt="" class="chats_list_item__pfp">
                         <div class="chats_list_item__info">
                             <div class="chats_list_item__info__name">Tarik Joyce</div>
                             <div class="chats_list_item__info__msg">Hello world!</div>
@@ -58,11 +64,13 @@
                     </div>
                 </div>
                 <div class="chat_top_bar__options">
-                    <button class="icon_button"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg></button>
-                    <button class="icon_button"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
+                    <button class="icon_button"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg></button>
+                    <button class="icon_button"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none"
+                            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M5 12h.01M12 12h.01M19 12h.01M6 12a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0zm7 0a1 1 0 11-2 0 1 1 0 012 0z" />
                         </svg></button>

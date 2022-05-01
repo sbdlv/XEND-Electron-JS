@@ -1,12 +1,22 @@
 .chats_list{
     display: flex;
     flex-direction: column;
+
+    &__header{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        margin-left: 18px;
+        margin-right: 18px;
+        margin-bottom: 8px;
+    }
     
     &__title{
-        margin-left: 18px;
         font-size: 14px;
         font-weight: bold;
         color: $text-grey;
-        margin-bottom: 8px;
+        margin: 0;
     }
+
 }

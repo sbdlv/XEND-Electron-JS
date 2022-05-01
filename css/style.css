@@ -116,7 +116,7 @@ main #chat, main #sidebar {
   display: flex;
   justify-content: center;
   align-items: center;
-  color: #7c7c7c;
+  color: #535353;
   transition: all 0.25s;
 }
 .icon_button:hover {
@@ -147,9 +147,13 @@ main #chat, main #sidebar {
   background-color: #f5f5f5;
   border-radius: 15px;
   margin: 18px;
+  width: calc(100% - 18px - 16px);
   display: flex;
   align-items: center;
   padding: 16px;
+  border: none;
+  text-align: left;
+  transition: all 0.25s;
 }
 .profile_card__pfp {
   object-fit: cover;
@@ -168,17 +172,28 @@ main #chat, main #sidebar {
   font-size: 14px;
   color: #7c7c7c;
 }
+.profile_card:hover {
+  cursor: pointer;
+  background-color: #e8e8e8;
+}
 
 .chats_list {
   display: flex;
   flex-direction: column;
 }
-.chats_list__title {
+.chats_list__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   margin-left: 18px;
+  margin-right: 18px;
+  margin-bottom: 8px;
+}
+.chats_list__title {
   font-size: 14px;
   font-weight: bold;
   color: #7c7c7c;
-  margin-bottom: 8px;
+  margin: 0;
 }
 
 .chats_list_item {
@@ -190,6 +205,8 @@ main #chat, main #sidebar {
   border-top: 1px solid transparent;
   border-bottom: 1px solid transparent;
   background-color: transparent;
+  transition: all 0.25s;
+  text-align: left;
 }
 .chats_list_item--active {
   background-color: #fafafa;
@@ -201,6 +218,10 @@ main #chat, main #sidebar {
   border-radius: 15px;
   height: 48px;
   width: 48px;
+  background-image: url("../img/user_pfp.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  background-color: #bbb;
 }
 .chats_list_item__info {
   margin-left: 14px;
@@ -215,7 +236,7 @@ main #chat, main #sidebar {
 }
 .chats_list_item:hover {
   cursor: pointer;
-  background-color: #fafafa;
+  background-color: #f5f5f5;
 }
 
 .chat_top_bar {

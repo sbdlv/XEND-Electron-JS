@@ -10,14 +10,28 @@
     border-bottom: 1px solid transparent;
     background-color: transparent;
 
+    transition: all .25s;
+
+    text-align: left;
+
     &--active {
         background-color: $chat-bg;
         border-top: 1px solid $border-1;
         border-bottom: 1px solid $border-1;
+
+        // & ~ .chats_list_item:hover{
+        //     background-color: red !important;
+        // }
     }
+
+
 
     &__pfp {
         @include pfp(48px);
+        background-image: url("../img/user_pfp.svg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-color: $color-missing-image-bg;
     }
 
     &__info {
@@ -36,6 +50,6 @@
 
     &:hover{
         cursor: pointer;
-        background-color: $chat-bg;
+        background-color: $bg-dark-1;
     }
 }
