@@ -69,16 +69,17 @@ app.on('window-all-closed', () => {
 })
 
 // IPC Handler functions
-function handleChatSend(username, msg) {
-    let JID = jid(`${username}@xend`);
+async function handleChatSend(event, username, msg) {
+    let JID = jid(username);
 
-    return xmpp_connection.send(xml("message", {
+    return xmpp_connection.sendReceive(xml("message", {
         to: JID,
         type: "chat"
-    }, xml("body", {}, msg))).catch((e) => {
-        console.log("ERROR SENDING MSG:");
-        console.log(e);
-    });
+    }, xml(
+        "body",
+        {},
+        msg
+    )));
 }
 
 async function handleGetVCard(event, user) {
