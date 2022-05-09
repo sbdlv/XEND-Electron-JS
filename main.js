@@ -124,25 +124,24 @@ async function handleXMPPLogin(event, user, domain, password, server, port) {
     xmpp_connection.on("online", () => {
         current_user_at = `${user}@${domain}`;
         xmpp_connection.send(xml("presence"));
-        console.log("XMPP connection successful!");
+        logger.info("XMPP connection successful!");
         //let mainWindow = createWindow(xmpp_connection);
 
         //Redirect incoming messages to renderer
-        xmpp_connection.on("stanza", async (stanza) => {
-            if (stanza.is("message")) {
-                let processedMessage = {
-                    from: stanza.attrs.from.substr(0, stanza.attrs.from.indexOf("/")),
-                    body: stanza.children[0].children[0]
-                }
-                mainWindow.webContents.send("new-message", processedMessage);
-            } else {
-                console.log("UNKNOWN STANZA");
-                //console.log(stanza);
-            }
-        });
+        xmpp_connection.on("stanza", stanzaHandler);
     });
 
     await xmpp_connection.start();
+
+    try {
+        await local_user_dao.updateInsert({
+            jid: `${user}@${domain}`,
+            password: password,
+            active: true
+        })
+    } catch (error) {
+        logger.error("Error inserting local user. " + error)
+    }
 
     mainWindow.loadFile("chat.html");
 
@@ -200,5 +199,16 @@ async function init() {
     })
 }
 
+async function stanzaHandler(stanza) {
+    if (stanza.is("message")) {
+        let processedMessage = {
+            from: stanza.attrs.from.substr(0, stanza.attrs.from.indexOf("/")),
+            body: stanza.children[0].children[0]
+        }
+        mainWindow.webContents.send("new-message", processedMessage);
+    } else {
+        logger.silly("New UNKNOWN STANZA from XMPP Connection");
+    }
+}
 
 init();

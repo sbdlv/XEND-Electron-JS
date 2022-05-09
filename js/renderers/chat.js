@@ -21,17 +21,17 @@ function onNewMessage(event, msg) {
     )
   }
 
-  
+
   //If the message is from the current chattingWith, then show the message on the timeline
-  if(chattingWith == msg.from){
+  if (chattingWith == msg.from) {
     chatTimeline.append(
       getChatBubble(msg.body, false)
     )
   }
-  
+
 }
 
-function getChatListItem(user_jid, body, sentLocally){
+function getChatListItem(user_jid, body, sentLocally) {
   return $("<button></button>").append(
     $("<img/>").addClass("chats_list_item__pfp").attr("src", "img/pfp1.jpg"),
     $("<div></div>").append(
@@ -76,8 +76,8 @@ function updateChattingWith(user_at, full_name = "Temp") {
 
 
 function sendMessage(event) {
-  if(event.key === "Enter"){
-    console.log(window.xendAPI.sendMsg(chattingWith, message_input.val())); 
+  if (event.key === "Enter") {
+    console.log(window.xendAPI.sendMsg(chattingWith, message_input.val()));
     chatTimeline.append(
       getChatBubble(message_input.val(), true)
     )
@@ -88,10 +88,14 @@ function sendMessage(event) {
 //main
 
 //Load last chatted users
-window.xendAPI.getLastChattedUsers().then((chats)=>{
+window.xendAPI.getLastChattedUsers().then((chats) => {
   chats.forEach(chat => {
-    chatListItems.prepend(
-      getChatListItem(chat.remote_jid, chat.body, chat.sentLocally)
-    )
+    if (chat.id != null) {
+      chatListItems.prepend(
+        getChatListItem(chat.remote_jid, chat.body, chat.sentLocally)
+      )
+    }
   });
+}).catch((err) => {
+  console.error("Couldn't get last chats. " + err);
 })
