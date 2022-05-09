@@ -14,12 +14,16 @@ const debug = require("@xmpp/debug");
 const sqlite3 = require('sqlite3');
 const { open } = require('sqlite');
 
+//App constants
+const APP_DATA_PATH = app.getPath('userData');
+const APP_DB_FILE_PATH = path.join(APP_DATA_PATH, "db.sqlite");
+
 //DB DAO
-/**
- * @type {import('./js/db/chat')}
- */
+/** @type {import('./js/db/message')} */
 let message_dao;
+/** @type {import('./js/db/local_user')} */
 let local_user_dao;
+/** @type {import('./js/db/chat')} */
 let chat_dao;
 
 //Logging
@@ -28,12 +32,8 @@ const winston = require('winston');
 const logger = winston.createLogger({
     level: process.env.LOG_LEVEL || 'info',
     format: winston.format.cli(),
-    transports: [new winston.transports.Console()],
+    transports: [new winston.transports.Console(), new winston.transports.File({ filename: path.join(APP_DATA_PATH, "main_log.log"), format: winston.format.timestamp() })],
 });
-
-//App constants
-const APP_DATA_PATH = app.getPath('userData');
-const APP_DB_FILE_PATH = path.join(APP_DATA_PATH, "db.sqlite");
 
 //Properties
 /**
@@ -206,6 +206,11 @@ async function stanzaHandler(stanza) {
             body: stanza.children[0].children[0]
         }
         mainWindow.webContents.send("new-message", processedMessage);
+
+        logger.debug(stanza);
+
+        /*let chat_id = chat_dao.get()
+        message_dao.insert()*/
     } else {
         logger.silly("New UNKNOWN STANZA from XMPP Connection");
     }
