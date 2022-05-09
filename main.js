@@ -1,13 +1,39 @@
-// main.js
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
-// Modules to control application life and create native browser window
-const { app, BrowserWindow, ipcMain, ipcRenderer } = require('electron')
+
+// Modules to control application life and create native browser window etc
+const { app, BrowserWindow, ipcMain, ipcRenderer, dialog } = require('electron')
 const path = require('path')
+const fs = require('fs')
 
 //XMPP imports
 const { client, xml } = require("@xmpp/client");
 const { jid } = require("@xmpp/jid");
 const debug = require("@xmpp/debug");
+
+//SQLite imports
+const sqlite3 = require('sqlite3');
+const { open } = require('sqlite');
+
+//DB DAO
+/**
+ * @type {import('./js/db/chat')}
+ */
+let message_dao;
+let local_user_dao;
+let chat_dao;
+
+//Logging
+const winston = require('winston');
+
+const logger = winston.createLogger({
+    level: process.env.LOG_LEVEL || 'info',
+    format: winston.format.cli(),
+    transports: [new winston.transports.Console()],
+});
+
+//App constants
+const APP_DATA_PATH = app.getPath('userData');
+const APP_DB_FILE_PATH = path.join(APP_DATA_PATH, "db.sqlite");
 
 //Properties
 /**
@@ -16,7 +42,17 @@ const debug = require("@xmpp/debug");
 let xmpp_connection;
 let current_user_at;
 let mainWindow;
+let db;
 
+
+function registerHandlers() {
+    ipcMain.handle("chat:get:users", handleChatGetLastUsers);
+    ipcMain.handle("chat:send", handleChatSend);
+    ipcMain.handle("xmpp:get:vcard", handleGetVCard);
+    ipcMain.handle("xmpp:login", handleXMPPLogin);
+}
+
+//Check for database file
 const createWindow = () => {
     // Create the browser window.
     mainWindow = new BrowserWindow({
@@ -38,35 +74,8 @@ const createWindow = () => {
     mainWindow.webContents.openDevTools()
 
     return mainWindow;
-
-    // Open the DevTools.
-    // mainWindow.webContents.openDevTools()
 }
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Algunas APIs pueden solamente ser usadas despues de que este evento ocurra.
-app.whenReady().then(() => {
-    app.on('activate', () => {
-        // On macOS it's common to re-create a window in the app when the
-        // dock icon is clicked and there are no other windows open.
-        if (BrowserWindow.getAllWindows().length === 0) createWindow()
-    })
-
-    //Register IPC Handlers
-    ipcMain.handle("chat:send", handleChatSend);
-    ipcMain.handle("xmpp:get:vcard", handleGetVCard);
-    ipcMain.handle("xmpp:login", handleXMPPLogin);
-
-    createWindow();
-})
-
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
-app.on('window-all-closed', () => {
-    if (process.platform !== 'darwin') app.quit()
-})
 
 // IPC Handler functions
 async function handleChatSend(event, username, msg) {
@@ -139,3 +148,57 @@ async function handleXMPPLogin(event, user, domain, password, server, port) {
 
     return true;
 }
+
+async function handleChatGetLastUsers(event) {
+    return await chat_dao.getChatsAndLastMessage();
+}
+
+//Init
+
+async function init() {
+    try {
+        //Open creates the file if necessary
+        db = await open(
+            {
+                filename: APP_DB_FILE_PATH,
+                driver: sqlite3.Database
+            }
+        );
+
+        //Init DAOs
+        message_dao = new (require("./js/db/message"))(db);
+        chat_dao = new (require("./js/db/chat"))(db);
+        local_user_dao = new (require("./js/db/local_user"))(db);
+    } catch (error) {
+        dialog.showErrorBox("Fallo con la base de datos", "No se ha podido establecer una conexión.");
+        logger.error("Couldn't make connection with the DB. " + error);
+        app.exit(1);
+    }
+
+    //Setup app
+    // This method will be called when Electron has finished
+    // initialization and is ready to create browser windows.
+    // Algunas APIs pueden solamente ser usadas despues de que este evento ocurra.
+    app.whenReady().then(() => {
+        app.on('activate', () => {
+            // On macOS it's common to re-create a window in the app when the
+            // dock icon is clicked and there are no other windows open.
+            if (BrowserWindow.getAllWindows().length === 0) createWindow()
+        })
+
+        //Register IPC Handlers
+        registerHandlers();
+
+        createWindow();
+    })
+
+    // Quit when all windows are closed, except on macOS. There, it's common
+    // for applications and their menu bar to stay active until the user quits
+    // explicitly with Cmd + Q.
+    app.on('window-all-closed', () => {
+        if (process.platform !== 'darwin') app.quit()
+    })
+}
+
+
+init();

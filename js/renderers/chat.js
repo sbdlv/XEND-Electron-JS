@@ -17,13 +17,7 @@ function onNewMessage(event, msg) {
     list_item.prependTo(chatListItems);
   } else {
     chatListItems.prepend(
-      $("<button></button>").append(
-        $("<img/>").addClass("chats_list_item__pfp").attr("src", "img/pfp1.jpg"),
-        $("<div></div>").append(
-          $("<div></div>").addClass("chats_list_item__info__name").text("Temp name"),
-          $("<div></div>").addClass("chats_list_item__info__msg").text(msg.body),
-        ).addClass("chats_list_item__info")
-      ).addClass("chats_list_item").attr("data-user", msg.from).attr("onclick", "changeChat(this)")
+      getChatListItem(msg.from, msg.body)
     )
   }
 
@@ -35,6 +29,16 @@ function onNewMessage(event, msg) {
     )
   }
   
+}
+
+function getChatListItem(user_jid, body, sentLocally){
+  return $("<button></button>").append(
+    $("<img/>").addClass("chats_list_item__pfp").attr("src", "img/pfp1.jpg"),
+    $("<div></div>").append(
+      $("<div></div>").addClass("chats_list_item__info__name").text("Temp name"),
+      $("<div></div>").addClass("chats_list_item__info__msg").text(body),
+    ).addClass("chats_list_item__info")
+  ).addClass("chats_list_item").attr("data-user", user_jid).attr("onclick", "changeChat(this)")
 }
 
 function changeChat(og) {
@@ -79,3 +83,15 @@ function sendMessage(event) {
     )
   }
 }
+
+
+//main
+
+//Load last chatted users
+window.xendAPI.getLastChattedUsers().then((chats)=>{
+  chats.forEach(chat => {
+    chatListItems.prepend(
+      getChatListItem(chat.remote_jid, chat.body, chat.sentLocally)
+    )
+  });
+})
