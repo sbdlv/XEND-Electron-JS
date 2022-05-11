@@ -51,6 +51,10 @@ function changeChat(og) {
   let vCard = getVCard(chattingWith);
 
   chattingWithAt.text(chattingWith);
+
+  window.xendAPI.getMessagesFrom(chattingWith).then((messages) => {
+    //TODO: Add the messages to the UI
+  })
 }
 
 function getVCard(user_at) {

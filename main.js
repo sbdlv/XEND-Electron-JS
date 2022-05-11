@@ -20,33 +20,34 @@ const APP_DB_FILE_PATH = path.join(APP_DATA_PATH, "db.sqlite");
 
 //DB DAO
 /** @type {import('./js/db/message')} */
-let message_dao;
+let messageDAO;
 /** @type {import('./js/db/local_user')} */
-let local_user_dao;
+let localUserDAO;
 /** @type {import('./js/db/chat')} */
-let chat_dao;
+let chatDAO;
 
 //Logging
 const winston = require('winston');
 
 const logger = winston.createLogger({
     level: process.env.LOG_LEVEL || 'info',
-    format: winston.format.cli(),
-    transports: [new winston.transports.Console(), new winston.transports.File({ filename: path.join(APP_DATA_PATH, "main_log.log"), format: winston.format.timestamp() })],
+    transports: [new winston.transports.Console({ format: winston.format.cli() }), new winston.transports.File({ filename: path.join(APP_DATA_PATH, "main_log.log"), format: winston.format.printf(info => `${new Date().toLocaleString()}\t[${info.level}]\t${info.message}`), })],
 });
 
 //Properties
 /**
  * @type {import('@xmpp/client').Client}
  */
-let xmpp_connection;
-let current_user_at;
+let xmppConnection;
+let localUserJID;
+let localUserID;
 let mainWindow;
 let db;
 
 
 function registerHandlers() {
     ipcMain.handle("chat:get:users", handleChatGetLastUsers);
+    ipcMain.handle("chat:get:messages", handleChatGetMessages);
     ipcMain.handle("chat:send", handleChatSend);
     ipcMain.handle("xmpp:get:vcard", handleGetVCard);
     ipcMain.handle("xmpp:login", handleXMPPLogin);
@@ -76,12 +77,33 @@ const createWindow = () => {
     return mainWindow;
 }
 
+async function handleChatGetMessages(event, remoteJID) {
+
+    console.log(localUserID, remoteJID);
+
+    let chat_id = await chatDAO.get(localUserID, remoteJID);
+    
+    if (chat_id === undefined) {
+        return [];
+    } else {
+        chat_id = chat_id.id;
+    }
+
+    return await messageDAO.getMessagesForChat(chat_id);
+}
 
 // IPC Handler functions
-async function handleChatSend(event, username, msg) {
-    let JID = jid(username);
+async function handleChatSend(event, remoteUser, msg) {
+    logger.info("Outgoing message to " + remoteUser);
+    let JID = jid(remoteUser);
 
-    return xmpp_connection.sendReceive(xml("message", {
+    try {
+        saveMessageOnDB(localUserJID, remoteUser, msg, true);
+    } catch (error) {
+        logger.error(error);
+    }
+
+    return await xmppConnection.sendReceive(xml("message", {
         to: JID,
         type: "chat"
     }, xml(
@@ -92,10 +114,10 @@ async function handleChatSend(event, username, msg) {
 }
 
 async function handleGetVCard(event, user) {
-    return await xmpp_connection.sendReceive(xml(
+    return await xmppConnection.sendReceive(xml(
         "iq",
         {
-            from: current_user_at,
+            from: localUserJID,
             id: 'v3',
             to: user,
             type: "get"
@@ -110,9 +132,7 @@ async function handleGetVCard(event, user) {
 }
 
 async function handleXMPPLogin(event, user, domain, password, server, port) {
-    console.log(user);
-
-    xmpp_connection = client({
+    xmppConnection = client({
         service: `xmpp://${server}:${port}`,
         domain: domain,
         username: user,
@@ -120,36 +140,54 @@ async function handleXMPPLogin(event, user, domain, password, server, port) {
     });
 
     //Setup listeners
-
-    xmpp_connection.on("online", () => {
-        current_user_at = `${user}@${domain}`;
-        xmpp_connection.send(xml("presence"));
+    xmppConnection.on("online", () => {
+        localUserJID = `${user}@${domain}`;
+        xmppConnection.send(xml("presence"));
         logger.info("XMPP connection successful!");
-        //let mainWindow = createWindow(xmpp_connection);
 
         //Redirect incoming messages to renderer
-        xmpp_connection.on("stanza", stanzaHandler);
+        xmppConnection.on("stanza", stanzaHandler);
     });
 
-    await xmpp_connection.start();
-
     try {
-        await local_user_dao.updateInsert({
-            jid: `${user}@${domain}`,
-            password: password,
-            active: true
-        })
+        await xmppConnection.start();
+
+        try {
+            localUserID = await localUserDAO.getID(`${user}@${domain}`);
+
+            if (localUserID === undefined) {
+                try {
+                    localUserID = await localUserDAO.insert(
+                        {
+                            jid: `${user}@${domain}`,
+                            password: password,
+                            active: true
+                        }
+                    );
+
+                    localUserID = localUserID.lastID;
+                } catch (error) {
+                    logger.error("Error inserting local user. " + error);
+                    //TODO: Should prevent loading app?
+                }
+            } else {
+                localUserID = localUserID.id;
+            }
+        } catch (error) {
+            logger.error("Error inserting local user. " + error)
+        }
+        logger.info("User ID: " + localUserID);
     } catch (error) {
-        logger.error("Error inserting local user. " + error)
+        logger.error("Error while login. " + error);
+        return false;
     }
 
     mainWindow.loadFile("chat.html");
-
     return true;
 }
 
 async function handleChatGetLastUsers(event) {
-    return await chat_dao.getChatsAndLastMessage();
+    return await chatDAO.getChatsAndLastMessage();
 }
 
 //Init
@@ -165,9 +203,9 @@ async function init() {
         );
 
         //Init DAOs
-        message_dao = new (require("./js/db/message"))(db);
-        chat_dao = new (require("./js/db/chat"))(db);
-        local_user_dao = new (require("./js/db/local_user"))(db);
+        messageDAO = new (require("./js/db/message"))(db);
+        chatDAO = new (require("./js/db/chat"))(db);
+        localUserDAO = new (require("./js/db/local_user"))(db);
     } catch (error) {
         dialog.showErrorBox("Fallo con la base de datos", "No se ha podido establecer una conexión.");
         logger.error("Couldn't make connection with the DB. " + error);
@@ -201,18 +239,51 @@ async function init() {
 
 async function stanzaHandler(stanza) {
     if (stanza.is("message")) {
+        let remoteJID = stanza.attrs.from.substr(0, stanza.attrs.from.indexOf("/"));
+        logger.info("Incoming message from " + remoteJID);
         let processedMessage = {
-            from: stanza.attrs.from.substr(0, stanza.attrs.from.indexOf("/")),
+            from: remoteJID,
             body: stanza.children[0].children[0]
         }
         mainWindow.webContents.send("new-message", processedMessage);
 
-        logger.debug(stanza);
+        try {
+            saveMessageOnDB(localUserJID, remoteJID, processedMessage.body, false);
+        } catch (error) {
+            logger.error(error);
+        }
 
-        /*let chat_id = chat_dao.get()
-        message_dao.insert()*/
     } else {
-        logger.silly("New UNKNOWN STANZA from XMPP Connection");
+        logger.info("New UNKNOWN STANZA from XMPP Connection");
+    }
+}
+
+/**
+ * 
+ * @param {*} localUserID 
+ * @param {*} remoteJID 
+ * @param {*} body 
+ * @param {*} sentLocally 
+ * @throws
+ */
+async function saveMessageOnDB(localUserID, remoteJID, body, sentLocally) {
+    let chatID = await chatDAO.get(localUserID, remoteJID);
+
+    if (chatID === undefined) {
+        try {
+            chatID = await chatDAO.insert({ local_user: localUserID, remote_jid: remoteJID })
+            chatID = chatID.lastID;
+        } catch (error) {
+            throw `Couldn't create insert new chat between ${localUserJID} and ${remoteJID}. ` + error;
+        }
+    } else {
+        chatID = chatID.id;
+    }
+
+    try {
+        await messageDAO.insert({ chat: chatID, body: body, date: new Date().getTime(), sentLocally: sentLocally });
+    } catch (error) {
+        throw `Couldn't insert incoming message for chat: ${chatID}. ` + error;
     }
 }
 

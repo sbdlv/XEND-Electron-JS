@@ -17,7 +17,7 @@ module.exports = class {
      * @returns 
      */
     async insert(chat) {
-        return await this.db.run(`INSERT INTO ${TABLE_NAME} (local_user, remote_jid) VALUES (@local_user, @remote_jid)`, chat);
+        return await this.db.run(`INSERT INTO ${TABLE_NAME} (local_user, remote_jid) VALUES (?, ?)`, chat.local_user, chat.remote_jid);
     }
 
     async create() {
@@ -34,7 +34,7 @@ module.exports = class {
      * @param {string} remote_jid 
      * @returns 
      */
-    async get(local_jid, remote_jid) {
-        return await this.db.get(`SELECT * FROM ${TABLE_NAME} WHERE local_user = ? AND remote_jid = ?`, local_jid, remote_jid);
+    async get(local_id, remote_jid) {
+        return await this.db.get(`SELECT * FROM ${TABLE_NAME} WHERE local_user = ? AND remote_jid = ?`, local_id, remote_jid);
     }
 }
