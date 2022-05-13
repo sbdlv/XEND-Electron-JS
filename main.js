@@ -82,7 +82,7 @@ async function handleChatGetMessages(event, remoteJID) {
     console.log(localUserID, remoteJID);
 
     let chat_id = await chatDAO.get(localUserID, remoteJID);
-    
+
     if (chat_id === undefined) {
         return [];
     } else {

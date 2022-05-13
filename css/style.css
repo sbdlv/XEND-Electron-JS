@@ -65,6 +65,31 @@ input::placeholder {
   background-color: #bfbfbf;
 }
 
+.modal-wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: #0000005e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.modal-wrapper--hide {
+  display: none;
+}
+.modal-wrapper .modal-close {
+  display: flex;
+  justify-content: flex-end;
+}
+.modal-wrapper .modal-close .icon_button:hover {
+  background-color: #ffd1d1;
+}
+.modal-wrapper .modal-close svg {
+  height: 20px;
+}
+
 main {
   display: flex;
 }
@@ -340,6 +365,50 @@ main #chat, main #sidebar {
 }
 .form-group input {
   width: 100%;
+}
+
+.modal-new-chat {
+  background-color: #fafafa;
+  padding: 20px;
+  border-radius: 15px;
+  flex-grow: 1;
+  max-width: 450px;
+  border: 1px solid #e6e6e6;
+}
+.modal-new-chat__search {
+  width: 100%;
+}
+.modal-new-chat .modal-close {
+  margin-bottom: 20px;
+}
+
+.input-with-button {
+  position: relative;
+}
+.input-with-button input {
+  width: 100%;
+}
+.input-with-button button {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 42px;
+  width: 42px;
+  border: none;
+  border-radius: 15px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.input-with-button button svg {
+  height: 25px;
+}
+.input-with-button button:hover {
+  cursor: pointer;
+}
+.input-with-button--primary button {
+  background-color: #0177cb;
+  color: white;
 }
 
 /*# sourceMappingURL=style.css.map */

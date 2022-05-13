@@ -1,64 +1,85 @@
-let chatListItems = $("#chats_list_items");
 let chattingWith = "";
-let chattingWithName = $("#chatting-with-name");
-let chattingWithAt = $("#chatting-with-at");
-let chatTimeline = $("#chat__area__timeline");
-let message_input = $("#message_input");
 
-message_input.on("keypress", sendMessage);
+let UI = {
+  recentChats: $("#chats_list_items"),
+  chat: {
+    timeline: $("#chat__area__timeline"),
+    input: $("#ui.chat.input"),
+    remoteJID: $("#chatting-with-at"),
+    remoteName: $("#chatting-with-name"),
+  }
+}
+
+UI.chat.input.on("keypress", sendMessage);
 
 function onNewMessage(event, msg) {
-  //TODO: Manage to create/update chat list item and if it is current chat, append the new message bubble
   let list_item = $(`.chats_list_item[data-user="${msg.from}"]`);
 
   //Create or update list item
   if (list_item.length) {
     list_item.find(".chats_list_item__info__msg").text(msg.body);
-    list_item.prependTo(chatListItems);
+    list_item.prependTo(UI.recentChats);
   } else {
-    chatListItems.prepend(
+    UI.recentChats.prepend(
       getChatListItem(msg.from, msg.body)
     )
   }
 
-
   //If the message is from the current chattingWith, then show the message on the timeline
   if (chattingWith == msg.from) {
-    chatTimeline.append(
+    UI.chat.timeline.append(
       getChatBubble(msg.body, false)
     )
   }
 
 }
 
-function getChatListItem(user_jid, body, sentLocally) {
+function getChatListItem(user_jid, body, isActive = false) {
   return $("<button></button>").append(
     $("<img/>").addClass("chats_list_item__pfp").attr("src", "img/pfp1.jpg"),
     $("<div></div>").append(
       $("<div></div>").addClass("chats_list_item__info__name").text("Temp name"),
       $("<div></div>").addClass("chats_list_item__info__msg").text(body),
     ).addClass("chats_list_item__info")
-  ).addClass("chats_list_item").attr("data-user", user_jid).attr("onclick", "changeChat(this)")
+  ).addClass("chats_list_item").attr("data-user", user_jid).attr("onclick", "changeChat(this)").addClass(isActive ? "chats_list_item--active" : "")
 }
 
-function changeChat(og) {
-  chatTimeline.children().remove();
+async function changeChat(og) {
+  UI.chat.timeline.children().remove();
 
-  $(".chats_list_item--active").removeClass("chats_list_item--active");
+  let listItem = $(og);
+  swapActiveStatusChatListItem(listItem);
 
-  chattingWith = $(og).addClass("chats_list_item--active").attr("data-user");
+  updateChatUI(listItem.addClass("chats_list_item--active").attr("data-user"));
+}
 
-  let vCard = getVCard(chattingWith);
+async function updateChatUI(remoteJID) {
+  chattingWith = remoteJID;
 
-  chattingWithAt.text(chattingWith);
+  //Set chattingWith for future operations like sending messages etc.
+  let vCard = await getVCard(chattingWith);
 
+  //Update UI
+  UI.chat.remoteJID.text(chattingWith);
+  UI.chat.remoteName.text("User " + chattingWith);
+
+  //TODO: Set avatar and FN from vCard
+
+  //Append messages
   window.xendAPI.getMessagesFrom(chattingWith).then((messages) => {
-    //TODO: Add the messages to the UI
+    messages.forEach(message => {
+      UI.chat.timeline.prepend(getChatBubble(message.body, message.sentLocally));
+    });
   })
 }
 
-function getVCard(user_at) {
+function swapActiveStatusChatListItem(newListItem, oldListItem = $(".chats_list_item--active")) {
+  oldListItem.removeClass("chats_list_item--active");
+  newListItem.addClass("chats_list_item--active").attr("data-user");
+}
 
+async function getVCard(user_at) {
+  return await window.xendAPI.getVCard(user_at);
 }
 
 function getChatBubble(msg, isLocalMessage = false) {
@@ -74,20 +95,48 @@ setTimeout(async () => {
 
 
 function updateChattingWith(user_at, full_name = "Temp") {
-  chattingWithAt.text(user_at);
-  chattingWithName.text(full_name);
+  UI.chat.remoteJID.text(user_at);
+  UI.chat.remoteName.text(full_name);
 }
 
 
 function sendMessage(event) {
   if (event.key === "Enter") {
-    console.log(window.xendAPI.sendMsg(chattingWith, message_input.val()));
-    chatTimeline.append(
-      getChatBubble(message_input.val(), true)
+    console.log(window.xendAPI.sendMsg(chattingWith, UI.chat.input.val()));
+    UI.chat.timeline.append(
+      getChatBubble(UI.chat.input.val(), true)
     )
   }
 }
 
+
+function openNewChatModal() {
+  $("#new-chat-modal").removeClass("modal-wrapper--hide");
+}
+
+function closeNewChatModal(og) {
+  $(og).closest(".modal-wrapper").addClass("modal-wrapper--hide");
+}
+
+function startNewChat(og) {
+  let remoteJID = $(og).closest("input").val();
+
+  let list_item = $(`.chats_list_item[data-user="${remoteJID}"]`);
+  //If the list item already exist, set the active status, if not, create it
+  if (list_item.length) {
+    swapActiveStatusChatListItem(list_item);
+    //TODO:
+  } else {
+    UI.recentChats.prepend(
+      getChatListItem(remoteJID, "", true)
+    )
+  }
+
+  closeNewChatModal(og);
+
+  //Load chat at the chat section
+  updateChatUI(remoteJID);
+}
 
 //main
 
@@ -95,7 +144,7 @@ function sendMessage(event) {
 window.xendAPI.getLastChattedUsers().then((chats) => {
   chats.forEach(chat => {
     if (chat.id != null) {
-      chatListItems.prepend(
+      UI.recentChats.prepend(
         getChatListItem(chat.remote_jid, chat.body, chat.sentLocally)
       )
     }

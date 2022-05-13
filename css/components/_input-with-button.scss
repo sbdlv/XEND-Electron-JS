@@ -1,0 +1,38 @@
+.input-with-button{
+    position: relative;
+
+    input{
+        width: 100%;
+    }
+
+    button{
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: $input-with-button-size;
+        width: $input-with-button-size;
+        border: none;
+
+        border-radius: $border-radius;
+
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        svg{
+            height: 25px;
+        }
+        
+        &:hover{
+            cursor: pointer;
+        }
+    }
+
+    &--primary{
+        button{
+            background-color: $color-primary;
+            color: white;
+        }
+    }
+
+}
