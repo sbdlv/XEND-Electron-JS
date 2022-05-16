@@ -1,16 +1,18 @@
 let chattingWith = "";
 
 let UI = {
+  profileCard: {
+    userName: $("#local-user-name"),
+    userJID: $("#local-user-jid")
+  },
   recentChats: $("#chats_list_items"),
   chat: {
     timeline: $("#chat__area__timeline"),
-    input: $("#ui.chat.input"),
+    input: $("#message_input").on("keypress", sendMessage),
     remoteJID: $("#chatting-with-at"),
     remoteName: $("#chatting-with-name"),
   }
 }
-
-UI.chat.input.on("keypress", sendMessage);
 
 function onNewMessage(event, msg) {
   let list_item = $(`.chats_list_item[data-user="${msg.from}"]`);
@@ -38,16 +40,21 @@ function getChatListItem(user_jid, body, isActive = false) {
   return $("<button></button>").append(
     $("<img/>").addClass("chats_list_item__pfp").attr("src", "img/pfp1.jpg"),
     $("<div></div>").append(
-      $("<div></div>").addClass("chats_list_item__info__name").text("Temp name"),
+      $("<div></div>").addClass("chats_list_item__info__name").text(user_jid), //TODO: user proper vCard FN if available, if not, dont show anything ?
       $("<div></div>").addClass("chats_list_item__info__msg").text(body),
     ).addClass("chats_list_item__info")
   ).addClass("chats_list_item").attr("data-user", user_jid).attr("onclick", "changeChat(this)").addClass(isActive ? "chats_list_item--active" : "")
 }
 
 async function changeChat(og) {
-  UI.chat.timeline.children().remove();
-
   let listItem = $(og);
+
+  //Prevent processing if it is already the active chat
+  if (listItem.hasClass("chats_list_item--active")) {
+    return;
+  }
+
+  UI.chat.timeline.children().remove();
   swapActiveStatusChatListItem(listItem);
 
   updateChatUI(listItem.addClass("chats_list_item--active").attr("data-user"));
@@ -61,7 +68,7 @@ async function updateChatUI(remoteJID) {
 
   //Update UI
   UI.chat.remoteJID.text(chattingWith);
-  UI.chat.remoteName.text("User " + chattingWith);
+  UI.chat.remoteName.text(chattingWith); //TODO: user proper vCard FN if available, if not, dont show anything ?
 
   //TODO: Set avatar and FN from vCard
 
@@ -119,7 +126,7 @@ function closeNewChatModal(og) {
 }
 
 function startNewChat(og) {
-  let remoteJID = $(og).closest("input").val();
+  let remoteJID = $(og).prev().val();
 
   let list_item = $(`.chats_list_item[data-user="${remoteJID}"]`);
   //If the list item already exist, set the active status, if not, create it
@@ -141,7 +148,13 @@ function startNewChat(og) {
 //main
 
 //Load last chatted users
+window.xendAPI.getLocalUserJID().then((userJID) => {
+  UI.profileCard.userJID.text(userJID);
+  UI.profileCard.userName.text(userJID); //TODO: user proper vCard FN if available, if not, dont show anything ?
+})
+
 window.xendAPI.getLastChattedUsers().then((chats) => {
+  console.log(`Loaded ${chats.length} chat/s`);
   chats.forEach(chat => {
     if (chat.id != null) {
       UI.recentChats.prepend(

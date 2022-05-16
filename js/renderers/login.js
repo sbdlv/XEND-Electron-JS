@@ -11,12 +11,16 @@ function login(og) {
 
 
     window.xendAPI.loginXMPP(user, domain, password, server, port).then(
-        () => {
+        (isNotError) => {
+            if(!isNotError){
+                $(og).prop("disabled", false);
+            }
             //console.log("Logeado!")
         }
     ).catch(
-        () => {
+        (err) => {
             $(og).prop("disabled", false);
+            console.error("Unkwonw error");
             //console.log("Error en el login")
         }
     )

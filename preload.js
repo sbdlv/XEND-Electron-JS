@@ -9,4 +9,5 @@ contextBridge.exposeInMainWorld('xendAPI', {
     loginXMPP: (user, domain, password, server, port) => ipcRenderer.invoke('xmpp:login', user, domain, password, server, port),
     getLastChattedUsers: ()=> ipcRenderer.invoke('chat:get:users'),
     getMessagesFrom: (remoteJID)=> ipcRenderer.invoke('chat:get:messages', remoteJID),
+    getLocalUserJID: ()=> ipcRenderer.invoke('xmpp:get:user:jid'),
 })

@@ -50,6 +50,7 @@ function registerHandlers() {
     ipcMain.handle("chat:get:messages", handleChatGetMessages);
     ipcMain.handle("chat:send", handleChatSend);
     ipcMain.handle("xmpp:get:vcard", handleGetVCard);
+    ipcMain.handle("xmpp:get:user:jid", handleXMPPGetUserJID);
     ipcMain.handle("xmpp:login", handleXMPPLogin);
 }
 
@@ -57,6 +58,7 @@ function registerHandlers() {
 const createWindow = () => {
     // Create the browser window.
     mainWindow = new BrowserWindow({
+        title: "XEND",
         width: 1280,
         height: 720,
         minWidth: 550,
@@ -77,9 +79,12 @@ const createWindow = () => {
     return mainWindow;
 }
 
-async function handleChatGetMessages(event, remoteJID) {
+async function handleXMPPGetUserJID(event) {
+    return localUserJID;
+}
 
-    console.log(localUserID, remoteJID);
+async function handleChatGetMessages(event, remoteJID) {
+    logger.info("Querying messages with " + remoteJID);
 
     let chat_id = await chatDAO.get(localUserID, remoteJID);
 
@@ -233,7 +238,12 @@ async function init() {
     // for applications and their menu bar to stay active until the user quits
     // explicitly with Cmd + Q.
     app.on('window-all-closed', () => {
-        if (process.platform !== 'darwin') app.quit()
+        if (process.platform !== 'darwin'){
+            app.quit()
+            if(xmppConnection != undefined){
+                xmppConnection.close();
+            }
+        }    
     })
 }
 
@@ -241,6 +251,7 @@ async function stanzaHandler(stanza) {
     if (stanza.is("message")) {
         let remoteJID = stanza.attrs.from.substr(0, stanza.attrs.from.indexOf("/"));
         logger.info("Incoming message from " + remoteJID);
+        console.log(stanza);
         let processedMessage = {
             from: remoteJID,
             body: stanza.children[0].children[0]
