@@ -103,12 +103,12 @@ async function handleChatSend(event, remoteUser, msg) {
     let JID = jid(remoteUser);
 
     try {
-        saveMessageOnDB(localUserJID, remoteUser, msg, true);
+        saveMessageOnDB(localUserID, remoteUser, msg, true);
     } catch (error) {
         logger.error(error);
     }
 
-    return await xmppConnection.sendReceive(xml("message", {
+    return await xmppConnection.send(xml("message", {
         to: JID,
         type: "chat"
     }, xml(
@@ -238,12 +238,12 @@ async function init() {
     // for applications and their menu bar to stay active until the user quits
     // explicitly with Cmd + Q.
     app.on('window-all-closed', () => {
-        if (process.platform !== 'darwin'){
+        if (process.platform !== 'darwin') {
             app.quit()
-            if(xmppConnection != undefined){
+            if (xmppConnection != undefined) {
                 xmppConnection.close();
             }
-        }    
+        }
     })
 }
 
@@ -251,7 +251,12 @@ async function stanzaHandler(stanza) {
     if (stanza.is("message")) {
         let remoteJID = stanza.attrs.from.substr(0, stanza.attrs.from.indexOf("/"));
         logger.info("Incoming message from " + remoteJID);
-        console.log(stanza);
+
+        //Prevent stanzas with these childs: origin-id and displayed stanzas
+        if (!stanza.children[0].name != "body") {
+            return;
+        }
+
         let processedMessage = {
             from: remoteJID,
             body: stanza.children[0].children[0]
@@ -259,7 +264,7 @@ async function stanzaHandler(stanza) {
         mainWindow.webContents.send("new-message", processedMessage);
 
         try {
-            saveMessageOnDB(localUserJID, remoteJID, processedMessage.body, false);
+            saveMessageOnDB(localUserID, remoteJID, processedMessage.body, false);
         } catch (error) {
             logger.error(error);
         }
@@ -271,10 +276,10 @@ async function stanzaHandler(stanza) {
 
 /**
  * 
- * @param {*} localUserID 
- * @param {*} remoteJID 
- * @param {*} body 
- * @param {*} sentLocally 
+ * @param {number} localUserID 
+ * @param {string} remoteJID 
+ * @param {string} body 
+ * @param {boolean} sentLocally 
  * @throws
  */
 async function saveMessageOnDB(localUserID, remoteJID, body, sentLocally) {
@@ -285,11 +290,13 @@ async function saveMessageOnDB(localUserID, remoteJID, body, sentLocally) {
             chatID = await chatDAO.insert({ local_user: localUserID, remote_jid: remoteJID })
             chatID = chatID.lastID;
         } catch (error) {
-            throw `Couldn't create insert new chat between ${localUserJID} and ${remoteJID}. ` + error;
+            throw `Couldn't insert new chat between ${localUserJID} and ${remoteJID}. ` + error;
         }
     } else {
         chatID = chatID.id;
     }
+
+    logger.info("Saving message for chat: " + chatID);
 
     try {
         await messageDAO.insert({ chat: chatID, body: body, date: new Date().getTime(), sentLocally: sentLocally });

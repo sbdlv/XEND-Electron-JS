@@ -158,7 +158,7 @@ window.xendAPI.getLastChattedUsers().then((chats) => {
   chats.forEach(chat => {
     if (chat.id != null) {
       UI.recentChats.prepend(
-        getChatListItem(chat.remote_jid, chat.body, chat.sentLocally)
+        getChatListItem(chat.remote_jid, chat.body, false)
       )
     }
   });

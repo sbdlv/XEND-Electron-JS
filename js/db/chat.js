@@ -30,7 +30,7 @@ module.exports = class {
 
     /**
      * 
-     * @param {string} local_jid 
+     * @param {number} local_id
      * @param {string} remote_jid 
      * @returns 
      */
