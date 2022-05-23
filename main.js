@@ -56,6 +56,7 @@ function registerHandlers() {
     ipcMain.handle("xmpp:set:vcard", handleSetVCard);
     ipcMain.handle("xmpp:get:user:jid", handleXMPPGetUserJID);
     ipcMain.handle("xmpp:login", handleXMPPLogin);
+    ipcMain.handle("xmpp:prompt:vcard:image", handlePromptVCardImage);
     ipcMain.on("screen:load:settings", onScreenLoadSettings);
     ipcMain.on("screen:load:chat", onScreenLoadChat);
 }
@@ -83,6 +84,24 @@ const createWindow = () => {
     mainWindow.webContents.openDevTools()
 
     return mainWindow;
+}
+
+async function handlePromptVCardImage(event) {
+    let file = await dialog.showOpenDialog({
+        title: "Escoger imagen de perfil",
+        filters: [
+            {
+                name: "Imágenes",
+                extensions: ["jpg", "png"]
+            }
+        ]
+    })
+
+    if (file.canceled) {
+        return false;
+    } else {
+        return fs.readFileSync(file.filePaths[0], { encoding: "base64" });
+    }
 }
 
 async function onScreenLoadSettings(event) {
@@ -187,6 +206,20 @@ async function handleSetVCard(event, vCard) {
                 "DESC",
                 {},
                 vCard.DESC
+            ),
+            xml(
+                "PHOTO",
+                {},
+                xml(
+                    "TYPE",
+                    {},
+                    "image/jpeg"
+                ),
+                xml(
+                    "BINVAL",
+                    {},
+                    vCard.PHOTO_BASE_64
+                )
             )
         )
     ));
