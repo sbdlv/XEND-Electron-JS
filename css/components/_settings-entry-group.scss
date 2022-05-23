@@ -1,0 +1,17 @@
+.settings-entry-group {
+    &__title {
+        color: $text-grey;
+
+        text-transform: uppercase;
+
+        font-size: 14px;
+        font-weight: 500;
+        margin-left: 10px;
+        margin-bottom: 5px;
+    }
+
+    &__entries {
+        display: flex;
+        flex-direction: column;
+    }
+}

@@ -1,0 +1,14 @@
+.card{
+    background-color: $bg-dark-1;
+    border-radius: $border-radius;
+    padding: 16px;
+
+    border: none;
+
+    transition: all .25s;
+
+    &:hover{
+        cursor: pointer;
+        background-color: $bg-dark-2;
+    }
+}

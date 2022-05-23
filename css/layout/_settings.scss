@@ -1,0 +1,46 @@
+.settings-layout{
+    display: flex;
+
+    background-color: #fff;
+    margin: 20px auto;
+    border-radius: $border-radius;
+    padding: 20px;
+
+    height: calc(100vh - 40px);
+    overflow: hidden;
+    
+    &__entries{
+        width: 20%;
+        padding-right: 40px;
+
+        &__back{
+            margin-bottom: 20px;
+        }
+
+        .pill-button{
+            margin: 5px 0;
+        }
+    }
+
+    &__views{
+        flex-grow: 1;
+
+        .tab{
+            overflow: auto;
+            max-height: 100%;
+        }
+    }
+
+    .profile_card{
+        margin-bottom: 20px;
+    }
+    
+    .actions{
+        display: flex;
+        justify-content: flex-end;
+
+        button:last-of-type{
+            margin-left: 20px;
+        }
+    }
+}

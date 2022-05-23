@@ -1,5 +1,9 @@
-#sidebar{
+#sidebar {
     width: $chat-sidebar-w;
     border-right: 1px solid $border-1;
     background-color: $color-white;
+
+    .profile_card {
+        margin: 18px;
+    }
 }

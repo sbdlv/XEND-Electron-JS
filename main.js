@@ -29,6 +29,9 @@ let chatDAO;
 //Logging
 const winston = require('winston');
 
+//Utils
+const { iqArrayToVCard } = require("./js/utils/ToolsvCard");
+
 const logger = winston.createLogger({
     level: process.env.LOG_LEVEL || 'info',
     transports: [new winston.transports.Console({ format: winston.format.cli() }), new winston.transports.File({ filename: path.join(APP_DATA_PATH, "main_log.log"), format: winston.format.printf(info => `${new Date().toLocaleString()}\t[${info.level}]\t${info.message}`), })],
@@ -50,8 +53,11 @@ function registerHandlers() {
     ipcMain.handle("chat:get:messages", handleChatGetMessages);
     ipcMain.handle("chat:send", handleChatSend);
     ipcMain.handle("xmpp:get:vcard", handleGetVCard);
+    ipcMain.handle("xmpp:set:vcard", handleSetVCard);
     ipcMain.handle("xmpp:get:user:jid", handleXMPPGetUserJID);
     ipcMain.handle("xmpp:login", handleXMPPLogin);
+    ipcMain.on("screen:load:settings", onScreenLoadSettings);
+    ipcMain.on("screen:load:chat", onScreenLoadChat);
 }
 
 //Check for database file
@@ -77,6 +83,14 @@ const createWindow = () => {
     mainWindow.webContents.openDevTools()
 
     return mainWindow;
+}
+
+async function onScreenLoadSettings(event) {
+    mainWindow.loadFile("settings.html");
+}
+
+async function onScreenLoadChat(event) {
+    mainWindow.loadFile("chat.html");
 }
 
 async function handleXMPPGetUserJID(event) {
@@ -118,8 +132,15 @@ async function handleChatSend(event, remoteUser, msg) {
     )));
 }
 
+/**
+ * 
+ * @param {*} event 
+ * @param {*} user 
+ * @returns 
+ * @see https://xmpp.org/extensions/xep-0054.html#sect-idm45828960584512
+ */
 async function handleGetVCard(event, user) {
-    return await xmppConnection.sendReceive(xml(
+    let vCard = await xmppConnection.sendReceive(xml(
         "iq",
         {
             from: localUserJID,
@@ -132,6 +153,41 @@ async function handleGetVCard(event, user) {
             {
                 xmlns: 'vcard-temp'
             }
+        )
+    ));
+
+    return iqArrayToVCard(vCard.children[0].children);
+}
+
+/**
+ * 
+ * @param {*} event 
+ * @param {*} vCard 
+ * @returns 
+ * @see https://xmpp.org/extensions/xep-0054.html#sect-idm45828960593504
+ */
+async function handleSetVCard(event, vCard) {
+    return await xmppConnection.sendReceive(xml(
+        "iq",
+        {
+            id: 'v2',
+            type: "set"
+        },
+        xml(
+            "vCard",
+            {
+                xmlns: 'vcard-temp'
+            },
+            xml(
+                "FN",
+                {},
+                vCard.FN
+            ),
+            xml(
+                "DESC",
+                {},
+                vCard.DESC
+            )
         )
     ));
 }
@@ -220,7 +276,7 @@ async function init() {
     //Setup app
     // This method will be called when Electron has finished
     // initialization and is ready to create browser windows.
-    // Algunas APIs pueden solamente ser usadas despues de que este evento ocurra.
+    // Algunas APIs pueden solamente ser usadas después de que este evento ocurra.
     app.whenReady().then(() => {
         app.on('activate', () => {
             // On macOS it's common to re-create a window in the app when the

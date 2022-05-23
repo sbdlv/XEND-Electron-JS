@@ -1,16 +1,9 @@
 .profile_card{
-    background-color: $bg-dark-1;
-    border-radius: $border-radius;
-    margin: 18px;
     width: calc(100% - 18px - 16px);
     display: flex;
     align-items: center;
-    padding: 16px;
 
-    border: none;
     text-align: left;
-
-    transition: all .25s;
 
     &__pfp{
         @include pfp(55px);
@@ -30,8 +23,11 @@
         }
     }
 
-    &:hover{
-        cursor: pointer;
-        background-color: $bg-dark-2;
+    &--big &__pfp{
+        @include pfp(150px);        
+    }
+
+    &--no-padding{
+        padding: 0;
     }
 }

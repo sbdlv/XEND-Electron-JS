@@ -1,0 +1,27 @@
+.pill-button{
+    border-radius: $border-radius;
+
+    border: none;
+    background-color: transparent;
+    padding: 10px;
+
+    color: $color-icon-button;
+    transition: all .25s;
+    text-align: left;
+
+    &--active{
+        background-color: $color-primary;
+        color: white;
+
+        &:hover{
+            background-color: $color-primary;
+            cursor: pointer;
+        }
+    }
+
+    &:hover{
+        background-color: $bg-dark-1;
+        cursor: pointer;
+        color: black;
+    }
+}

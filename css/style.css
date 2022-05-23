@@ -9,13 +9,14 @@ body {
   box-sizing: border-box;
 }
 
-input {
+input, textarea {
   border: 1px solid #e6e6e6;
   padding: 12px 20px;
   border-radius: 15px;
   background-color: white;
+  width: 100%;
 }
-input::placeholder {
+input::placeholder, textarea::placeholder {
   color: #7c7c7c;
 }
 
@@ -47,9 +48,16 @@ input::placeholder {
   border-radius: 15px;
   font-weight: bold;
   font-size: 16px;
-  padding: 15px 20px;
-  border: none;
+  padding: 13px 18px;
+  border: 2px solid white;
   transition: all 0.25s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.btn svg {
+  height: 20px;
+  margin-right: 5px;
 }
 .btn:hover:not(:disabled) {
   cursor: pointer;
@@ -57,12 +65,36 @@ input::placeholder {
 .btn--primary {
   color: white;
   background-color: #0177cb;
+  border-color: #0177cb;
 }
 .btn--primary:hover:not(:disabled) {
+  background-color: #016ab6;
+  border-color: #016ab6;
+}
+.btn--secondary {
+  border-color: #0177cb;
+}
+.btn--secondary:hover:not(:disabled) {
+  background-color: #f5f5f5;
+  border-color: #016ab6;
+}
+.btn--success {
+  color: white;
+  background-color: #dcffd1;
+}
+.btn--success:hover:not(:disabled) {
+  background-color: #016ab6;
+}
+.btn--danger {
+  color: white;
+  background-color: #ffd1d1;
+}
+.btn--danger:hover:not(:disabled) {
   background-color: #016ab6;
 }
 .btn:disabled {
   background-color: #bfbfbf;
+  border-color: #bfbfbf;
 }
 
 .modal-wrapper {
@@ -90,6 +122,35 @@ input::placeholder {
   height: 20px;
 }
 
+.user_pfp {
+  object-fit: cover;
+  border-radius: 15px;
+  height: 150px;
+  width: 150px;
+}
+
+.container {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (min-width: 768px) {
+  .container {
+    width: 750px;
+  }
+}
+@media (min-width: 992px) {
+  .container {
+    width: 970px;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    width: 1170px;
+  }
+}
 main {
   display: flex;
 }
@@ -101,6 +162,9 @@ main #chat, main #sidebar {
   width: 340px;
   border-right: 1px solid #e6e6e6;
   background-color: white;
+}
+#sidebar .profile_card {
+  margin: 18px;
 }
 
 #chat {
@@ -129,6 +193,43 @@ main #chat, main #sidebar {
 }
 #chat__area__input input {
   width: 100%;
+}
+
+.settings-layout {
+  display: flex;
+  background-color: #fff;
+  margin: 20px auto;
+  border-radius: 15px;
+  padding: 20px;
+  height: calc(100vh - 40px);
+  overflow: hidden;
+}
+.settings-layout__entries {
+  width: 20%;
+  padding-right: 40px;
+}
+.settings-layout__entries__back {
+  margin-bottom: 20px;
+}
+.settings-layout__entries .pill-button {
+  margin: 5px 0;
+}
+.settings-layout__views {
+  flex-grow: 1;
+}
+.settings-layout__views .tab {
+  overflow: auto;
+  max-height: 100%;
+}
+.settings-layout .profile_card {
+  margin-bottom: 20px;
+}
+.settings-layout .actions {
+  display: flex;
+  justify-content: flex-end;
+}
+.settings-layout .actions button:last-of-type {
+  margin-left: 20px;
 }
 
 .icon_button {
@@ -169,16 +270,10 @@ main #chat, main #sidebar {
 }
 
 .profile_card {
-  background-color: #f5f5f5;
-  border-radius: 15px;
-  margin: 18px;
   width: calc(100% - 18px - 16px);
   display: flex;
   align-items: center;
-  padding: 16px;
-  border: none;
   text-align: left;
-  transition: all 0.25s;
 }
 .profile_card__pfp {
   object-fit: cover;
@@ -197,9 +292,14 @@ main #chat, main #sidebar {
   font-size: 14px;
   color: #7c7c7c;
 }
-.profile_card:hover {
-  cursor: pointer;
-  background-color: #e8e8e8;
+.profile_card--big .profile_card__pfp {
+  object-fit: cover;
+  border-radius: 15px;
+  height: 150px;
+  width: 150px;
+}
+.profile_card--no-padding {
+  padding: 0;
 }
 
 .chats_list {
@@ -409,6 +509,67 @@ main #chat, main #sidebar {
 .input-with-button--primary button {
   background-color: #0177cb;
   color: white;
+}
+
+.card {
+  background-color: #f5f5f5;
+  border-radius: 15px;
+  padding: 16px;
+  border: none;
+  transition: all 0.25s;
+}
+.card:hover {
+  cursor: pointer;
+  background-color: #e8e8e8;
+}
+
+.pill-button {
+  border-radius: 15px;
+  border: none;
+  background-color: transparent;
+  padding: 10px;
+  color: #535353;
+  transition: all 0.25s;
+  text-align: left;
+}
+.pill-button--active {
+  background-color: #0177cb;
+  color: white;
+}
+.pill-button--active:hover {
+  background-color: #0177cb;
+  cursor: pointer;
+}
+.pill-button:hover {
+  background-color: #f5f5f5;
+  cursor: pointer;
+  color: black;
+}
+
+.settings-entry-group__title {
+  color: #7c7c7c;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 10px;
+  margin-bottom: 5px;
+}
+.settings-entry-group__entries {
+  display: flex;
+  flex-direction: column;
+}
+
+.tab {
+  display: none;
+}
+.tab--active {
+  display: block;
+}
+
+.date-line {
+  text-align: center;
+  font-size: 14px;
+  color: #7c7c7c;
 }
 
 /*# sourceMappingURL=style.css.map */

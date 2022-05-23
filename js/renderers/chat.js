@@ -72,9 +72,27 @@ async function updateChatUI(remoteJID) {
 
   //TODO: Set avatar and FN from vCard
 
+  /*
+    NOTE:
+    In the future, messages will be loaded by index offset etc. When fetching more messages,
+    the last date-line should be removed.
+  */
   //Append messages
   window.xendAPI.getMessagesFrom(chattingWith).then((messages) => {
+    let lastDate;
     messages.forEach(message => {
+      let messageDate = new Date(message.date * 1000);
+      console.log(messageDate);
+
+      if (!lastDate) {
+        lastDate = messageDate;
+      }
+
+      if (messageDate.getDate() != lastDate.getDate() && messageDate.getMonth() != lastDate.getMonth() && messageDate.getFullYear() != lastDate.getFullYear()) {
+        UI.chat.timeline.prepend($("<div></div>").text(`${messageDate.getDate()}/${messageDate.getMonth()}/${messageDate.getFullYear()}`).addClass("date-line"))
+        lastDate = messageDate;
+      }
+
       UI.chat.timeline.prepend(getChatBubble(message.body, message.sentLocally));
     });
   })
@@ -145,6 +163,9 @@ function startNewChat(og) {
   updateChatUI(remoteJID);
 }
 
+function loadSettings() {
+  window.xendAPI.loadSettings();
+}
 //main
 
 //Load last chatted users

@@ -10,11 +10,13 @@ body {
   box-sizing: border-box;
 }
 
-input {
+input,textarea {
   border: 1px solid $border-1;
   padding: 12px 20px;
   border-radius: $border-radius;
   background-color: $bg-white;
+  width: 100%;
+
   &::placeholder {
     color: $text-grey;
   }
@@ -48,9 +50,17 @@ input {
   border-radius: $border-radius;
   font-weight: bold;
   font-size: 16px;
-  padding: 15px 20px;
-  border: none;
+  padding: 13px 18px;
+  border: 2px solid $bg-white;
   transition: all .25s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  svg{
+    height: 20px;
+    margin-right: 5px;
+  }
 
   &:hover:not(:disabled) {
     cursor: pointer;
@@ -59,6 +69,35 @@ input {
   &--primary {
     color: white;
     background-color: $color-primary;
+    border-color: $color-primary;
+
+    &:hover:not(:disabled) {
+      background-color: $color-primary-darken;
+      border-color: $color-primary-darken;
+    }
+  }
+  
+  &--secondary {
+    border-color: $color-primary;
+
+    &:hover:not(:disabled) {
+      background-color: $bg-dark-1;
+      border-color: $color-primary-darken;
+    }
+  }
+
+  &--success{
+    color: white;
+    background-color: $success-light;
+  
+    &:hover:not(:disabled) {
+      background-color: $color-primary-darken;
+    }
+  }
+
+  &--danger {
+    color: white;
+    background-color: $danger-light;
 
     &:hover:not(:disabled) {
       background-color: $color-primary-darken;
@@ -67,6 +106,7 @@ input {
 
   &:disabled{
     background-color: $color-disabled;
+    border-color: $color-disabled;
   }
 }
 
@@ -93,12 +133,38 @@ input {
 
     .icon_button{
       &:hover{
-        background-color: $close-modal;
+        background-color: $danger-light;
       }
     }
 
     svg{
       height: 20px;
     }
+  }
+}
+
+.user_pfp{
+  @include pfp(150px);
+}
+
+.container {
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-right: auto;
+  margin-left: auto;
+}
+@media (min-width: 768px) {
+  .container {
+    width: 750px;
+  }
+}
+@media (min-width: 992px) {
+  .container {
+    width: 970px;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    width: 1170px;
   }
 }

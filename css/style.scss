@@ -6,6 +6,7 @@
 @import "layout/main";
 @import "layout/sidebar";
 @import "layout/chat";
+@import "layout/settings";
 
 //Components
 @import "components/icon_button";
@@ -18,3 +19,8 @@
 @import "components/form-group";
 @import "components/modal_new-chat";
 @import "components/input-with-button";
+@import "components/card";
+@import "components/pill-button";
+@import "components/settings-entry-group";
+@import "components/tab";
+@import "components/date-line";
