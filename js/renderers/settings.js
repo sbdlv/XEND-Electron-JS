@@ -1,5 +1,6 @@
 let UI = {
     vCard: {
+        userJID: $("#local-user-jid"),
         FN: $("#fn"),
         DESC: $("#desc"),
     },
@@ -33,6 +34,11 @@ function loadTab(event){
 }
 
 //main
+
+(async ()=>{
+    let userJID = await window.xendAPI.getLocalUserJID();
+    UI.vCard.userJID.text(userJID);
+})();
 
 //Load and display current vCard
 window.xendAPI.getVCard("usuario1@xend").then((vCard) => {

@@ -572,4 +572,19 @@ main #chat, main #sidebar {
   color: #7c7c7c;
 }
 
+.user-pfp-name {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.user-pfp-name__pfp {
+  border-radius: 15px;
+  height: 200px;
+  width: 200px;
+}
+.user-pfp-name__info {
+  margin-top: 20px;
+}
+
 /*# sourceMappingURL=style.css.map */
