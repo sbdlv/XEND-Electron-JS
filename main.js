@@ -53,6 +53,7 @@ function registerHandlers() {
     ipcMain.handle("chat:get:messages", handleChatGetMessages);
     ipcMain.handle("chat:send", handleChatSend);
     ipcMain.handle("xmpp:get:vcard", handleGetVCard);
+    ipcMain.handle("xmpp:get:vcard:local", handleGetLocalVCard);
     ipcMain.handle("xmpp:set:vcard", handleSetVCard);
     ipcMain.handle("xmpp:get:user:jid", handleXMPPGetUserJID);
     ipcMain.handle("xmpp:login", handleXMPPLogin);
@@ -165,6 +166,26 @@ async function handleGetVCard(event, user) {
             from: localUserJID,
             id: 'v3',
             to: user,
+            type: "get"
+        },
+        xml(
+            "vCard",
+            {
+                xmlns: 'vcard-temp'
+            }
+        )
+    ));
+
+    return iqArrayToVCard(vCard.children[0].children);
+}
+
+async function handleGetLocalVCard(event) {
+    let vCard = await xmppConnection.sendReceive(xml(
+        "iq",
+        {
+            from: localUserJID,
+            id: 'v3',
+            to: localUserJID,
             type: "get"
         },
         xml(
@@ -339,24 +360,28 @@ async function init() {
 async function stanzaHandler(stanza) {
     if (stanza.is("message")) {
         let remoteJID = stanza.attrs.from.substr(0, stanza.attrs.from.indexOf("/"));
-        logger.info("Incoming message from " + remoteJID);
-
+        console.log(stanza);
+        
         //Prevent stanzas with these childs: origin-id and displayed stanzas
-        if (!stanza.children[0].name != "body") {
+        if (stanza.children[0].name != "body") {
             return;
         }
-
+        
+        logger.info("Incoming message from " + remoteJID);
+        
         let processedMessage = {
             from: remoteJID,
             body: stanza.children[0].children[0]
         }
-        mainWindow.webContents.send("new-message", processedMessage);
-
+        
         try {
-            saveMessageOnDB(localUserID, remoteJID, processedMessage.body, false);
+            mainWindow.webContents.send("new-message", processedMessage);
         } catch (error) {
-            logger.error(error);
+            logger.error("Error sending message over to web contents");
         }
+
+        logger.info("Saving msg on DB");
+        saveMessageOnDB(localUserID, remoteJID, processedMessage.body, false).catch(logger.error);
 
     } else {
         logger.info("New UNKNOWN STANZA from XMPP Connection");
@@ -392,6 +417,8 @@ async function saveMessageOnDB(localUserID, remoteJID, body, sentLocally) {
     } catch (error) {
         throw `Couldn't insert incoming message for chat: ${chatID}. ` + error;
     }
+
+    return 0;
 }
 
 init();

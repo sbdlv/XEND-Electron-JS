@@ -6,6 +6,7 @@ contextBridge.exposeInMainWorld('xendAPI', {
         ipcRenderer.on('new-message', fun);
     },
     getVCard: (user) => ipcRenderer.invoke('xmpp:get:vcard', user),
+    getLocalVCard: () => ipcRenderer.invoke('xmpp:get:vcard:local'),
     setVCard: (vCard) => ipcRenderer.invoke('xmpp:set:vcard', vCard),
     promptVCardImage: () => ipcRenderer.invoke('xmpp:prompt:vcard:image'),
     loginXMPP: (user, domain, password, server, port) => ipcRenderer.invoke('xmpp:login', user, domain, password, server, port),

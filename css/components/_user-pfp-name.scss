@@ -1,17 +1,25 @@
-.user-pfp-name{
+.user-pfp-name {
     display: flex;
     flex-direction: column;
 
     justify-content: center;
     align-items: center;
 
-    &__pfp{
+    &__pfp {
         border-radius: $border-radius;
         height: 200px;
         width: 200px;
     }
+    &__pfp-buttons {
+        display: flex;
+        justify-content: center;
 
-    &__info{
+        button {
+            margin: 10px;
+        }
+    }
+
+    &__info {
         margin-top: 20px;
     }
 }

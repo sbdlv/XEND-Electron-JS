@@ -1,6 +1,5 @@
 let UI = {
     vCard: {
-        userJID: $("#local-user-jid"),
         FN: $("#fn"),
         DESC: $("#desc"),
         PHOTO: $("#photo"),
@@ -37,12 +36,6 @@ function loadTab(event) {
 }
 
 //main
-
-(async () => {
-    let userJID = await window.xendAPI.getLocalUserJID();
-    UI.vCard.userJID.text(userJID);
-})();
-
 //Load and display current vCard
 window.xendAPI.getVCard("usuario1@xend").then((vCard) => {
     console.log(vCard);
@@ -53,11 +46,14 @@ window.xendAPI.getVCard("usuario1@xend").then((vCard) => {
 
 UI.entries.all.on("click", loadTab);
 
-(async () => {
+
+
+
+async function editPFP() {
     let base64photo = await window.xendAPI.promptVCardImage();
 
     if (base64photo) {
         UI.vCard.PHOTO.val(base64photo);
         UI.vCard.PHOTO_IMG.attr("src", `data:image/png;base64, ${base64photo}`);
     }
-})();
+}

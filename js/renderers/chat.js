@@ -1,9 +1,11 @@
 let chattingWith = "";
+let recentMessageDate;
 
 let UI = {
   profileCard: {
     userName: $("#local-user-name"),
-    userJID: $("#local-user-jid")
+    userJID: $("#local-user-jid"),
+    userPhoto: $("#local-user-photo")
   },
   recentChats: $("#chats_list_items"),
   chat: {
@@ -24,6 +26,13 @@ function onNewMessage(event, msg) {
   } else {
     UI.recentChats.prepend(
       getChatListItem(msg.from, msg.body)
+    )
+  }
+
+  //Create date-line if the message is from a different day from the previous one
+  if (!isSameDayMonthAndYear(recentMessageDate, new Date())) {
+    UI.chat.timeline.append(
+      getDateTimeline(new Date())
     )
   }
 
@@ -62,6 +71,7 @@ async function changeChat(og) {
 
 async function updateChatUI(remoteJID) {
   chattingWith = remoteJID;
+  recentMessageDate = undefined;
 
   //Set chattingWith for future operations like sending messages etc.
   let vCard = await getVCard(chattingWith);
@@ -79,23 +89,33 @@ async function updateChatUI(remoteJID) {
   */
   //Append messages
   window.xendAPI.getMessagesFrom(chattingWith).then((messages) => {
-    let lastDate;
-    messages.forEach(message => {
-      let messageDate = new Date(message.date * 1000);
-      console.log(messageDate);
+    let lastMessageDate;
 
-      if (!lastDate) {
-        lastDate = messageDate;
+    if (messages.length > 0) {
+      recentMessageDate = new Date(messages[0].date);
+    }
+
+    messages.forEach(message => {
+      let messageDate = new Date(message.date);
+      console.log(messageDate, message.body);
+
+      if (!lastMessageDate) {
+        lastMessageDate = messageDate;
       }
 
-      if (messageDate.getDate() != lastDate.getDate() && messageDate.getMonth() != lastDate.getMonth() && messageDate.getFullYear() != lastDate.getFullYear()) {
-        UI.chat.timeline.prepend($("<div></div>").text(`${messageDate.getDate()}/${messageDate.getMonth()}/${messageDate.getFullYear()}`).addClass("date-line"))
-        lastDate = messageDate;
+      if (!isSameDayMonthAndYear(messageDate, lastMessageDate)) {
+        UI.chat.timeline.prepend(getDateTimeline(messageDate))
+        lastMessageDate = messageDate;
       }
 
       UI.chat.timeline.prepend(getChatBubble(message.body, message.sentLocally));
     });
+
   })
+}
+
+function getDateTimeline(messageDate) {
+  return $("<div></div>").text(isSameDayMonthAndYear(new Date(), messageDate) ? "Hoy" : `${messageDate.getDate()}/${messageDate.getMonth()}/${messageDate.getFullYear()}`).addClass("date-line")
 }
 
 function swapActiveStatusChatListItem(newListItem, oldListItem = $(".chats_list_item--active")) {
@@ -110,14 +130,6 @@ async function getVCard(user_at) {
 function getChatBubble(msg, isLocalMessage = false) {
   return $("<div></div>").text(msg).addClass("chat_bubble").addClass(isLocalMessage ? "" : "chat_bubble--remote");
 }
-
-window.xendAPI.addNewMessageHandler(onNewMessage);
-
-
-setTimeout(async () => {
-  console.log(await window.xendAPI.getVCard("usuario2@xend"));
-}, 1000)
-
 
 function updateChattingWith(user_at, full_name = "Temp") {
   UI.chat.remoteJID.text(user_at);
@@ -166,12 +178,33 @@ function startNewChat(og) {
 function loadSettings() {
   window.xendAPI.loadSettings();
 }
+
+function isSameDayMonthAndYear(date1, date2) {
+  return date1.getDate() == date2.getDate() && date1.getMonth() == date2.getMonth() && date1.getFullYear() == date2.getFullYear();
+}
+
+
 //main
+
+window.xendAPI.addNewMessageHandler(onNewMessage);
 
 //Load last chatted users
 window.xendAPI.getLocalUserJID().then((userJID) => {
   UI.profileCard.userJID.text(userJID);
-  UI.profileCard.userName.text(userJID); //TODO: user proper vCard FN if available, if not, dont show anything ?
+})
+
+window.xendAPI.getLocalVCard().then(async (vCard) => {
+  if (vCard.PHOTO) {
+    UI.profileCard.userPhoto.attr("src", `data:image/png;base64, ${vCard.PHOTO}`);
+  } else {
+
+  }
+  if (vCard.FN) {
+    UI.profileCard.userName.text(vCard.FN);
+  } else {
+    let userJID = await window.xendAPI.getLocalUserJID()
+    UI.profileCard.userName.text(userJID);
+  }
 })
 
 window.xendAPI.getLastChattedUsers().then((chats) => {
@@ -186,3 +219,4 @@ window.xendAPI.getLastChattedUsers().then((chats) => {
 }).catch((err) => {
   console.error("Couldn't get last chats. " + err);
 })
+

@@ -588,6 +588,13 @@ main #chat, main #sidebar {
   height: 200px;
   width: 200px;
 }
+.user-pfp-name__pfp-buttons {
+  display: flex;
+  justify-content: center;
+}
+.user-pfp-name__pfp-buttons button {
+  margin: 10px;
+}
 .user-pfp-name__info {
   margin-top: 20px;
 }
