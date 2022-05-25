@@ -1,0 +1,43 @@
+.modal-profile {
+    background-color: $chat-bg;
+    padding: 20px;
+    border-radius: $border-radius;
+    flex-grow: 1;
+    max-width: 600px;
+    border: 1px solid $border-1;
+
+    max-height: 80%;
+    overflow: auto;
+
+    position: relative;
+
+    .modal-close {
+        margin-bottom: 20px;
+    }
+
+    &__desc{
+        color: $text-grey;
+        font-style: italic;
+
+    }
+    *{
+        z-index: 4;
+    }
+
+    //TODO: better height
+    &::after{
+        position: absolute;
+        content: "";
+
+        background-color: $bg-white;
+        bottom: 0;
+        left: 0;
+
+        width: 100%;
+        height: 80%;
+        z-index: 1;
+
+        border-radius: $border-radius;
+        box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    }
+}

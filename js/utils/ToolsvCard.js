@@ -4,7 +4,11 @@
  * @returns 
  */
 function iqArrayToVCard(iq) {
-    let vCard = {};
+    let vCard = {
+        FN: "",
+        DESC: "",
+        PHOTO: "",
+    };
 
     iq.forEach(vCardProp => {
         switch (vCardProp.name) {

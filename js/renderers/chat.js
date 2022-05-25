@@ -13,6 +13,12 @@ let UI = {
     input: $("#message_input").on("keypress", sendMessage),
     remoteJID: $("#chatting-with-at"),
     remoteName: $("#chatting-with-name"),
+  },
+  profileModal: {
+    fn: $("#profile-fn"),
+    jid: $("#profile-jid"),
+    desc: $("#profile-desc"),
+    photo: $("#profile-photo"),
   }
 }
 
@@ -45,9 +51,9 @@ function onNewMessage(event, msg) {
 
 }
 
-function getChatListItem(user_jid, body, isActive = false) {
+function getChatListItem(user_jid, body, isActive = false, photo = "") {
   return $("<button></button>").append(
-    $("<img/>").addClass("chats_list_item__pfp").attr("src", "img/pfp1.jpg"),
+    $("<img/>").addClass("chats_list_item__pfp").attr("src", `data:image/png;base64, ${photo}`).on("error", fixMissingPFP),
     $("<div></div>").append(
       $("<div></div>").addClass("chats_list_item__info__name").text(user_jid), //TODO: user proper vCard FN if available, if not, dont show anything ?
       $("<div></div>").addClass("chats_list_item__info__msg").text(body),
@@ -91,26 +97,20 @@ async function updateChatUI(remoteJID) {
   window.xendAPI.getMessagesFrom(chattingWith).then((messages) => {
     let lastMessageDate;
 
-    if (messages.length > 0) {
-      recentMessageDate = new Date(messages[0].date);
-    }
-
     messages.forEach(message => {
       let messageDate = new Date(message.date);
       console.log(messageDate, message.body);
 
-      if (!lastMessageDate) {
+      if (lastMessageDate === undefined || !isSameDayMonthAndYear(messageDate, lastMessageDate)) {
+        UI.chat.timeline.append(getDateTimeline(messageDate))
         lastMessageDate = messageDate;
       }
 
-      if (!isSameDayMonthAndYear(messageDate, lastMessageDate)) {
-        UI.chat.timeline.prepend(getDateTimeline(messageDate))
-        lastMessageDate = messageDate;
-      }
-
-      UI.chat.timeline.prepend(getChatBubble(message.body, message.sentLocally));
+      UI.chat.timeline.append(getChatBubble(message.body, message.sentLocally));
     });
 
+    //For incoming messages
+    recentMessageDate = lastMessageDate;
   })
 }
 
@@ -157,7 +157,7 @@ function closeNewChatModal(og) {
 
 function startNewChat(og) {
   let remoteJID = $(og).prev().val();
-
+  
   let list_item = $(`.chats_list_item[data-user="${remoteJID}"]`);
   //If the list item already exist, set the active status, if not, create it
   if (list_item.length) {
@@ -166,13 +166,13 @@ function startNewChat(og) {
   } else {
     UI.recentChats.prepend(
       getChatListItem(remoteJID, "", true)
-    )
-  }
-
-  closeNewChatModal(og);
-
-  //Load chat at the chat section
-  updateChatUI(remoteJID);
+      )
+    }
+    
+    closeNewChatModal(og);
+    
+    //Load chat at the chat section
+    updateChatUI(remoteJID);
 }
 
 function loadSettings() {
@@ -183,7 +183,21 @@ function isSameDayMonthAndYear(date1, date2) {
   return date1.getDate() == date2.getDate() && date1.getMonth() == date2.getMonth() && date1.getFullYear() == date2.getFullYear();
 }
 
+function openProfileModal() {
+  window.xendAPI.getVCard(chattingWith).then((vCard) => {
+    
+    UI.profileModal.photo.attr("src", `data:image/png;base64, ${vCard.PHOTO}`);
+    UI.profileModal.desc.text(vCard.DESC);
+    UI.profileModal.jid.text(chattingWith);
+    UI.profileModal.fn.text(vCard.FN);
+    $("#profile-modal").removeClass("modal-wrapper--hide");
+  }).catch(console.error);
+}
 
+function fixMissingPFP(og) {
+  let img = og.target ? og.target : og;
+  img.src = "img/no_pfp.svg";
+}
 //main
 
 window.xendAPI.addNewMessageHandler(onNewMessage);
@@ -197,7 +211,7 @@ window.xendAPI.getLocalVCard().then(async (vCard) => {
   if (vCard.PHOTO) {
     UI.profileCard.userPhoto.attr("src", `data:image/png;base64, ${vCard.PHOTO}`);
   } else {
-
+    
   }
   if (vCard.FN) {
     UI.profileCard.userName.text(vCard.FN);

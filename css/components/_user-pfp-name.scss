@@ -21,5 +21,13 @@
 
     &__info {
         margin-top: 20px;
+        text-align: center;
+        &__fn{
+            font-weight: bold;
+            font-size: 24px;
+        }
+        &__at{
+            color: $text-grey;
+        }
     }
 }

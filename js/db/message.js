@@ -21,11 +21,11 @@ module.exports = class {
     }
 
     /**
-     * 
+     * ASC order
      * @param {number} chat_id 
      */
     async getMessagesForChat(chat_id) {
-        return await this.db.all(`SELECT * FROM message WHERE chat = ? ORDER BY date DESC`, chat_id);
+        return await this.db.all(`SELECT * FROM message WHERE chat = ? ORDER BY date ASC`, chat_id);
     }
 
     async create(){
