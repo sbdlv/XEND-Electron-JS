@@ -9,6 +9,7 @@ let UI = {
   },
   recentChats: $("#chats_list_items"),
   chat: {
+    root: $("#chat"),
     timeline: $("#chat__area__timeline"),
     input: $("#message_input").on("keypress", sendMessage),
     remoteJID: $("#chatting-with-at"),
@@ -63,6 +64,8 @@ function getChatListItem(user_jid, body, isActive = false, photo = "") {
 
 async function changeChat(og) {
   let listItem = $(og);
+
+  UI.chat.root.removeClass("chat--empty");
 
   //Prevent processing if it is already the active chat
   if (listItem.hasClass("chats_list_item--active")) {
@@ -139,10 +142,15 @@ function updateChattingWith(user_at, full_name = "Temp") {
 
 function sendMessage(event) {
   if (event.key === "Enter") {
-    console.log(window.xendAPI.sendMsg(chattingWith, UI.chat.input.val()));
+    let msgBody = UI.chat.input.val();
+
+    console.log(window.xendAPI.sendMsg(chattingWith, msgBody));
     UI.chat.timeline.append(
-      getChatBubble(UI.chat.input.val(), true)
+      getChatBubble(msgBody, true)
     )
+
+    UI.chat.input.val("");
+    updateChatListItem(msgBody);
   }
 }
 
@@ -157,22 +165,23 @@ function closeNewChatModal(og) {
 
 function startNewChat(og) {
   let remoteJID = $(og).prev().val();
-  
+
   let list_item = $(`.chats_list_item[data-user="${remoteJID}"]`);
   //If the list item already exist, set the active status, if not, create it
   if (list_item.length) {
     swapActiveStatusChatListItem(list_item);
     //TODO:
   } else {
+    UI.chat.root.removeClass("chat--empty");
     UI.recentChats.prepend(
       getChatListItem(remoteJID, "", true)
-      )
-    }
-    
-    closeNewChatModal(og);
-    
-    //Load chat at the chat section
-    updateChatUI(remoteJID);
+    )
+  }
+
+  closeNewChatModal(og);
+
+  //Load chat at the chat section
+  updateChatUI(remoteJID);
 }
 
 function loadSettings() {
@@ -185,7 +194,7 @@ function isSameDayMonthAndYear(date1, date2) {
 
 function openProfileModal() {
   window.xendAPI.getVCard(chattingWith).then((vCard) => {
-    
+
     UI.profileModal.photo.attr("src", `data:image/png;base64, ${vCard.PHOTO}`);
     UI.profileModal.desc.text(vCard.DESC);
     UI.profileModal.jid.text(chattingWith);
@@ -198,6 +207,11 @@ function fixMissingPFP(og) {
   let img = og.target ? og.target : og;
   img.src = "img/no_pfp.svg";
 }
+
+function updateChatListItem(msg) {
+  $(".chats_list_item--active").find(".chats_list_item__info__msg").text(msg);
+}
+
 //main
 
 window.xendAPI.addNewMessageHandler(onNewMessage);
@@ -211,7 +225,7 @@ window.xendAPI.getLocalVCard().then(async (vCard) => {
   if (vCard.PHOTO) {
     UI.profileCard.userPhoto.attr("src", `data:image/png;base64, ${vCard.PHOTO}`);
   } else {
-    
+
   }
   if (vCard.FN) {
     UI.profileCard.userName.text(vCard.FN);
@@ -223,6 +237,7 @@ window.xendAPI.getLocalVCard().then(async (vCard) => {
 
 window.xendAPI.getLastChattedUsers().then((chats) => {
   console.log(`Loaded ${chats.length} chat/s`);
+
   chats.forEach(chat => {
     if (chat.id != null) {
       UI.recentChats.prepend(
