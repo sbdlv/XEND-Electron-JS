@@ -14,12 +14,16 @@ let UI = {
     input: $("#message_input").on("keypress", sendMessage),
     remoteJID: $("#chatting-with-at"),
     remoteName: $("#chatting-with-name"),
+    photo: $("#chatting-with-photo")
   },
   profileModal: {
     fn: $("#profile-fn"),
     jid: $("#profile-jid"),
     desc: $("#profile-desc"),
     photo: $("#profile-photo"),
+  },
+  newChatModal: {
+    jid: $("#new-chat-jid")
   }
 }
 
@@ -81,15 +85,18 @@ async function changeChat(og) {
 async function updateChatUI(remoteJID) {
   chattingWith = remoteJID;
   recentMessageDate = undefined;
+  
+  UI.chat.root.removeClass("chat--empty");
 
   //Set chattingWith for future operations like sending messages etc.
   let vCard = await getVCard(chattingWith);
 
   //Update UI
   UI.chat.remoteJID.text(chattingWith);
-  UI.chat.remoteName.text(chattingWith); //TODO: user proper vCard FN if available, if not, dont show anything ?
+  UI.chat.remoteName.text(vCard.FN === "" ? chattingWith : vCard.FN);
 
-  //TODO: Set avatar and FN from vCard
+  //Set avatar and FN from vCard
+  UI.chat.photo.attr("src", `data:image/png;base64, ${vCard.PHOTO}`);
 
   /*
     NOTE:
@@ -163,8 +170,9 @@ function closeNewChatModal(og) {
   $(og).closest(".modal-wrapper").addClass("modal-wrapper--hide");
 }
 
-function startNewChat(og) {
-  let remoteJID = $(og).prev().val();
+async function startNewChat(event) {
+  event.preventDefault();
+  let remoteJID = UI.newChatModal.jid.val();
 
   let list_item = $(`.chats_list_item[data-user="${remoteJID}"]`);
   //If the list item already exist, set the active status, if not, create it
@@ -172,16 +180,20 @@ function startNewChat(og) {
     swapActiveStatusChatListItem(list_item);
     //TODO:
   } else {
+    let vCard = await window.xendAPI.getVCard(remoteJID);
+
     UI.chat.root.removeClass("chat--empty");
     UI.recentChats.prepend(
-      getChatListItem(remoteJID, "", true)
+      getChatListItem(remoteJID, "", true, vCard.PHOTO)
     )
   }
 
-  closeNewChatModal(og);
+  closeNewChatModal(event.target);
 
   //Load chat at the chat section
   updateChatUI(remoteJID);
+  
+  return false;
 }
 
 function loadSettings() {

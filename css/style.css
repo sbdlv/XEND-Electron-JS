@@ -221,16 +221,14 @@ main #chat, main #sidebar {
 
 .settings-layout {
   display: flex;
-  background-color: #fff;
-  margin: 20px auto;
-  border-radius: 15px;
-  padding: 20px;
-  height: calc(100vh - 40px);
+  height: 100vh;
   overflow: hidden;
 }
 .settings-layout__entries {
+  padding: 20px;
   width: 20%;
   padding-right: 40px;
+  min-width: 200px;
 }
 .settings-layout__entries__back {
   margin-bottom: 20px;
@@ -240,10 +238,12 @@ main #chat, main #sidebar {
 }
 .settings-layout__views {
   flex-grow: 1;
+  background-color: #fff;
 }
 .settings-layout__views .tab {
   overflow: auto;
   max-height: 100%;
+  padding: 40px;
 }
 .settings-layout .profile_card {
   margin-bottom: 20px;
@@ -516,7 +516,7 @@ main #chat, main #sidebar {
 .input-with-button input {
   width: 100%;
 }
-.input-with-button button {
+.input-with-button button, .input-with-button input[type=submit] {
   position: absolute;
   right: 0;
   top: 0;
@@ -528,10 +528,10 @@ main #chat, main #sidebar {
   justify-content: center;
   align-items: center;
 }
-.input-with-button button svg {
+.input-with-button button svg, .input-with-button input[type=submit] svg {
   height: 25px;
 }
-.input-with-button button:hover {
+.input-with-button button:hover, .input-with-button input[type=submit]:hover {
   cursor: pointer;
 }
 .input-with-button--primary button {
@@ -592,6 +592,17 @@ main #chat, main #sidebar {
 }
 .tab--active {
   display: block;
+  animation-name: appearTab;
+  animation-duration: 0.25s;
+  animation: 1;
+}
+@keyframes appearTab {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 .date-line {

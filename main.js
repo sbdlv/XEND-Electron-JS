@@ -1,7 +1,7 @@
 process.env["NODE_TLS_REJECT_UNAUTHORIZED"] = 0;
 
 // Modules to control application life and create native browser window etc
-const { app, BrowserWindow, ipcMain, ipcRenderer, dialog } = require('electron')
+const { app, BrowserWindow, ipcMain, dialog } = require('electron')
 const path = require('path')
 const fs = require('fs')
 
@@ -57,6 +57,7 @@ function registerHandlers() {
     ipcMain.handle("xmpp:set:vcard", handleSetVCard);
     ipcMain.handle("xmpp:get:user:jid", handleXMPPGetUserJID);
     ipcMain.handle("xmpp:login", handleXMPPLogin);
+    ipcMain.handle("xmpp:logout", handleLogout);
     ipcMain.handle("xmpp:prompt:vcard:image", handlePromptVCardImage);
     ipcMain.on("screen:load:settings", onScreenLoadSettings);
     ipcMain.on("screen:load:chat", onScreenLoadChat);
@@ -419,6 +420,16 @@ async function saveMessageOnDB(localUserID, remoteJID, body, sentLocally) {
     }
 
     return 0;
+}
+
+async function handleLogout(event) {
+    logger.info("Logout XMPP");
+    await xmppConnection.disconnect();
+    await xmppConnection.stop();
+
+    localUserDAO.setNotActive(localUserJID);
+
+    mainWindow.loadFile("login.html");
 }
 
 init();

@@ -1,33 +1,35 @@
 .settings-layout{
     display: flex;
 
-    background-color: #fff;
-    margin: 20px auto;
-    border-radius: $border-radius;
-    padding: 20px;
-
-    height: calc(100vh - 40px);
+    //margin: 20px auto;
+    //border-radius: $border-radius;
+    
+    height: 100vh;
     overflow: hidden;
     
     &__entries{
+        padding: 20px;
         width: 20%;
         padding-right: 40px;
-
+        min-width: 200px;
+        
         &__back{
             margin-bottom: 20px;
         }
-
+        
         .pill-button{
             margin: 5px 0;
         }
     }
-
+    
     &__views{
         flex-grow: 1;
+        background-color: #fff;
 
         .tab{
             overflow: auto;
             max-height: 100%;
+            padding: 40px;
         }
     }
 

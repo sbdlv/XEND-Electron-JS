@@ -57,3 +57,7 @@ async function editPFP() {
         UI.vCard.PHOTO_IMG.attr("src", `data:image/png;base64, ${base64photo}`);
     }
 }
+
+function logout() {
+    window.xendAPI.logoutXMPP().catch(console.error);
+}

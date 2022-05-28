@@ -37,13 +37,17 @@ module.exports = class {
     async update(local_user) {
         return await this.db.run(`UPDATE ${TABLE_NAME} SET jid = @jid, password = @password, active = @active WHERE id = @id`, local_user);
     }
-
+    
     async create() {
         return await this.db.exec("CREATE TABLE IF NOT EXISTS local_user ( id INTEGER PRIMARY KEY AUTOINCREMENT, jid TEXT UNIQUE, password TEXT, active INTEGER );");
     }
-
+    
     async getID(jid) {
         return await this.db.get(`SELECT id FROM ${TABLE_NAME} WHERE jid = ?`, jid);
+    }
+    
+    async setNotActive(jid){
+        return await this.db.run(`UPDATE ${TABLE_NAME} SET active = 0 WHERE jid = ?`, jid);
     }
 
 
