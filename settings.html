@@ -71,13 +71,24 @@
                                 </svg>Cerrar sesión</button>
                         </div>
                     </div>
-                    <div class="tab tab--active" id="tab-settings">
+                    <div class="tab" id="tab-settings">
+                        <div class="settings-section">
+                            <h2>Chats</h2>
+                            <p class="action-desc">Eliminar todos los chats almacenados de la cuenta actual. Una vez eliminados no se podrán recuperar.</p>
+                            <button class="btn btn--danger" onclick="deleteAllChats()">Borrar todos los chats</button>
+                        </div>
+                        <div class="settings-section">
+                            <h2>Datos</h2>
+                            <p class="action-desc">Eliminar todos datos almacenados del usuario actual, incluyendo credenciales de inicio de sesión y chats. Esta acción es irreversible.</p>
+                            <button class="btn btn--danger">Borrar todos los datos</button>
+                        </div>
                     </div>
                 </div>
         </div>
     </div>
 
     <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <script src="js/utils/simple_alerts.js"></script>
     <script src="js/renderers/settings.js"></script>
 </body>
 

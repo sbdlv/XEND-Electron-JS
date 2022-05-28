@@ -17,7 +17,12 @@ function save() {
         PHOTO_BASE_64: $("#photo").val()
     }
 
-    window.xendAPI.setVCard(vCard).then(console.log).catch(console.error);
+    window.xendAPI.setVCard(vCard).then(()=>{
+        showAlert("success", "Perfil actualizado."); 
+    }).catch((err)=>{
+        console.error(err);
+        showAlert("error", "Error al actualizar el perfil.")
+    });
 }
 
 function loadChat() {
@@ -41,7 +46,8 @@ window.xendAPI.getVCard("usuario1@xend").then((vCard) => {
     console.log(vCard);
     UI.vCard.FN.val(vCard.FN);
     UI.vCard.DESC.val(vCard.DESC);
-    UI.vCard.PHOTO_IMG.attr("src", `data:image/png;base64, ${vCard.PHOTO}`)
+    UI.vCard.PHOTO_IMG.attr("src", `data:image/png;base64, ${vCard.PHOTO}`);
+    UI.vCard.PHOTO.val(vCard.PHOTO);
 });
 
 UI.entries.all.on("click", loadTab);
@@ -60,4 +66,13 @@ async function editPFP() {
 
 function logout() {
     window.xendAPI.logoutXMPP().catch(console.error);
+}
+
+function deleteAllChats() {
+    window.xendAPI.deleteAllMessages().then(()=>{
+        showAlert("success", "Chats eliminados correctamente.")
+    }).catch((err)=>{
+        console.error(err)
+        showAlert("error", "No se han podido eliminar los chats.")
+    });
 }

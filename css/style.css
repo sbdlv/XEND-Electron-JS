@@ -87,11 +87,12 @@ input::placeholder, textarea::placeholder {
   background-color: #016ab6;
 }
 .btn--danger {
-  color: white;
-  background-color: #ffd1d1;
+  color: black;
+  border: 2px solid #f95d5d;
 }
 .btn--danger:hover:not(:disabled) {
-  background-color: #016ab6;
+  background-color: #f95d5d;
+  color: white;
 }
 .btn:disabled {
   background-color: #bfbfbf;
@@ -155,6 +156,10 @@ input::placeholder, textarea::placeholder {
 }
 .no-resize {
   resize: none;
+}
+
+.action-desc {
+  color: #7c7c7c;
 }
 
 main {
@@ -226,9 +231,9 @@ main #chat, main #sidebar {
 }
 .settings-layout__entries {
   padding: 20px;
-  width: 20%;
+  width: 250px;
   padding-right: 40px;
-  min-width: 200px;
+  min-width: 250px;
 }
 .settings-layout__entries__back {
   margin-bottom: 20px;
@@ -516,7 +521,7 @@ main #chat, main #sidebar {
 .input-with-button input {
   width: 100%;
 }
-.input-with-button button, .input-with-button input[type=submit] {
+.input-with-button button {
   position: absolute;
   right: 0;
   top: 0;
@@ -528,10 +533,10 @@ main #chat, main #sidebar {
   justify-content: center;
   align-items: center;
 }
-.input-with-button button svg, .input-with-button input[type=submit] svg {
+.input-with-button button svg {
   height: 25px;
 }
-.input-with-button button:hover, .input-with-button input[type=submit]:hover {
+.input-with-button button:hover {
   cursor: pointer;
 }
 .input-with-button--primary button {
@@ -592,17 +597,6 @@ main #chat, main #sidebar {
 }
 .tab--active {
   display: block;
-  animation-name: appearTab;
-  animation-duration: 0.25s;
-  animation: 1;
-}
-@keyframes appearTab {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
 }
 
 .date-line {
@@ -673,6 +667,58 @@ main #chat, main #sidebar {
   z-index: 1;
   border-radius: 15px;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+
+.settings-section:not(:first-of-type) {
+  margin-top: 30px;
+}
+.settings-section h2 {
+  margin-bottom: 5px;
+}
+.settings-section p {
+  margin-bottom: 25px;
+}
+
+#simple_alerts {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#simple_alerts .simple-alert {
+  margin: 5px;
+  padding: 10px;
+  max-width: 250px;
+  width: 100%;
+  border-radius: 15px;
+  border: 1px solid;
+  animation-name: simple-alert;
+  animation-duration: 1s;
+  animation-iteration-count: 1;
+  animation-delay: 4s;
+  animation-fill-mode: forwards;
+}
+@keyframes simple-alert {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+#simple_alerts .simple-alert.success {
+  background-color: #d1f6d5;
+  border-color: #b1eebb;
+  color: #4d9058;
+  font-size: 14px;
+}
+#simple_alerts .simple-alert.error {
+  background-color: #fcecef;
+  border-color: #f6aab9;
+  color: #8a5c65;
+  font-size: 14px;
 }
 
 /*# sourceMappingURL=style.css.map */

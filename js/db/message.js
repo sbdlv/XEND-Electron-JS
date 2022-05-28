@@ -20,6 +20,14 @@ module.exports = class {
         return await this.db.run(`INSERT INTO ${TABLE_NAME} (chat, body, date, sentLocally) VALUES (?, ?, ?, ?)`, message.chat, message.body, message.date, message.sentLocally);
     }
 
+    async deleteAll() {
+        return await this.db.run(`DELETE FROM ${TABLE_NAME}`);
+    }
+
+    async deleteFromChat(chat_id) {
+        return await this.db.run(`DELETE FROM ${TABLE_NAME} WHERE chat = ?`, chat_id);
+    }
+
     /**
      * ASC order
      * @param {number} chat_id 

@@ -96,11 +96,13 @@ input,textarea {
   }
 
   &--danger {
-    color: white;
-    background-color: $danger-light;
+    color: black;
+    //background-color: $danger-light;
+    border: 2px solid $danger;
 
     &:hover:not(:disabled) {
-      background-color: $color-primary-darken;
+      background-color: $danger;
+      color: white;
     }
   }
 
@@ -171,4 +173,8 @@ input,textarea {
 
 .no-resize{
   resize: none;
+}
+
+.action-desc{
+  color: $text-grey;
 }

@@ -1,0 +1,13 @@
+.settings-section{
+
+    &:not(:first-of-type){
+        margin-top: 30px;
+    }
+    h2{
+        margin-bottom: 5px;
+    }
+
+    p{
+        margin-bottom: 25px;
+    }
+}

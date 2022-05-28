@@ -20,6 +20,14 @@ module.exports = class {
         return await this.db.run(`INSERT INTO ${TABLE_NAME} (local_user, remote_jid) VALUES (?, ?)`, chat.local_user, chat.remote_jid);
     }
 
+    async delete(chat_id) {
+        return await this.db.run(`DELETE FROM ${TABLE_NAME} WHERE id = ?`, chat_id);
+    }
+
+    async deleteAll() {
+        return await this.db.run(`DELETE FROM ${TABLE_NAME}`);
+    }
+
     async create() {
         await this.db.exec("CREATE TABLE IF NOT EXISTS chat ( id INTEGER PRIMARY KEY AUTOINCREMENT, local_user INTEGER, remote_jid TEXT, UNIQUE(remote_jid, local_user));");
     }

@@ -119,6 +119,8 @@ async function updateChatUI(remoteJID) {
       UI.chat.timeline.append(getChatBubble(message.body, message.sentLocally));
     });
 
+    UI.chat.timeline.scrollTop(UI.chat.timeline[0].scrollHeight);
+
     //For incoming messages
     recentMessageDate = lastMessageDate;
   })
@@ -150,8 +152,14 @@ function updateChattingWith(user_at, full_name = "Temp") {
 function sendMessage(event) {
   if (event.key === "Enter") {
     let msgBody = UI.chat.input.val();
+    let date = new Date();
 
     console.log(window.xendAPI.sendMsg(chattingWith, msgBody));
+
+    if(!isSameDayMonthAndYear(date, recentMessageDate)){
+      UI.chat.timeline.append(getDateTimeline(date));
+    }
+    
     UI.chat.timeline.append(
       getChatBubble(msgBody, true)
     )

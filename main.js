@@ -51,6 +51,8 @@ let db;
 function registerHandlers() {
     ipcMain.handle("chat:get:users", handleChatGetLastUsers);
     ipcMain.handle("chat:get:messages", handleChatGetMessages);
+    ipcMain.handle("chat:delete:all", handleChatDeleteAll);
+    ipcMain.handle("chat:delete:with", handleChatDeleteWith);
     ipcMain.handle("chat:send", handleChatSend);
     ipcMain.handle("xmpp:get:vcard", handleGetVCard);
     ipcMain.handle("xmpp:get:vcard:local", handleGetLocalVCard);
@@ -70,7 +72,7 @@ const createWindow = () => {
         title: "XEND",
         width: 1280,
         height: 720,
-        minWidth: 550,
+        minWidth: 650,
         minHeight: 550,
         webPreferences: {
             preload: path.join(__dirname, 'preload.js'),
@@ -86,6 +88,25 @@ const createWindow = () => {
     mainWindow.webContents.openDevTools()
 
     return mainWindow;
+}
+
+async function handleChatDeleteAll() {
+    await messageDAO.deleteAll();
+    await chatDAO.deleteAll();
+
+    return true;
+}
+
+async function handleChatDeleteWith(event, remoteJID) {
+    let chatID = await chatDAO.get(localUserID, remoteJID);
+
+    if (chatID !== undefined) {
+        chatID = chatID.id;
+        await messageDAO.deleteFromChat(chatID);
+        await chatDAO.delete(chatID);
+    }
+
+    return true;
 }
 
 async function handlePromptVCardImage(event) {
@@ -362,19 +383,19 @@ async function stanzaHandler(stanza) {
     if (stanza.is("message")) {
         let remoteJID = stanza.attrs.from.substr(0, stanza.attrs.from.indexOf("/"));
         console.log(stanza);
-        
+
         //Prevent stanzas with these childs: origin-id and displayed stanzas
         if (stanza.children[0].name != "body") {
             return;
         }
-        
+
         logger.info("Incoming message from " + remoteJID);
-        
+
         let processedMessage = {
             from: remoteJID,
             body: stanza.children[0].children[0]
         }
-        
+
         try {
             mainWindow.webContents.send("new-message", processedMessage);
         } catch (error) {
