@@ -178,3 +178,14 @@ input,textarea {
 .action-desc{
   color: $text-grey;
 }
+
+
+@keyframes modal-show {
+  from {
+      opacity: 0;
+  }
+
+  to {
+      opacity: 1;
+  }
+}

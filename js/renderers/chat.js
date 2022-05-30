@@ -144,7 +144,7 @@ async function getVCard(user_at) {
 function getChatBubble(msg, isLocalMessage = false, date = new Date()) {
   return $("<div></div>").addClass("chat_bubble").addClass(isLocalMessage ? "" : "chat_bubble--remote").append(
     $("<div></div>").text(msg).addClass("chat_bubble__body"),
-    $("<div></div>").text(`${date.getHours()}:${date.getMinutes()}`).addClass("chat_bubble__date"),
+    $("<div></div>").text(`${date.getHours()}:${date.getMinutes() < 10 ? "0" + date.getMinutes() : date.getMinutes()}`).addClass("chat_bubble__date"),
     );
 }
 
@@ -179,16 +179,17 @@ function sendMessage(event) {
 
 function openNewChatModal() {
   $("#new-chat-modal").removeClass("modal-wrapper--hide");
+  UI.newChatModal.jid.trigger('focus');
 }
 
-function closeNewChatModal(og) {
+function closeModal(og) {
   $(og).closest(".modal-wrapper").addClass("modal-wrapper--hide");
 }
 
 async function startNewChat(event) {
   event.preventDefault();
   let remoteJID = UI.newChatModal.jid.val();
-
+  
   let list_item = $(`.chats_list_item[data-user="${remoteJID}"]`);
   //If the list item already exist, set the active status, if not, create it
   if (list_item.length) {
@@ -200,62 +201,77 @@ async function startNewChat(event) {
     UI.chat.root.removeClass("chat--empty");
     UI.recentChats.prepend(
       getChatListItem(remoteJID, "", true, vCard.PHOTO)
-    )
-  }
-
-  closeNewChatModal(event.target);
-
-  //Load chat at the chat section
-  updateChatUI(remoteJID);
-  
-  return false;
-}
-
-function loadSettings() {
-  window.xendAPI.loadSettings();
-}
-
-function isSameDayMonthAndYear(date1, date2) {
-  if(date1 === undefined ||date2 === undefined){
+      )
+    }
+    
+    closeModal(event.target);
+    
+    //Load chat at the chat section
+    updateChatUI(remoteJID);
+    
     return false;
   }
-
-  return date1.getDate() == date2.getDate() && date1.getMonth() == date2.getMonth() && date1.getFullYear() == date2.getFullYear();
-}
-
-function openProfileModal() {
-  window.xendAPI.getVCard(chattingWith).then((vCard) => {
-
-    UI.profileModal.photo.attr("src", `data:image/png;base64, ${vCard.PHOTO}`);
-    UI.profileModal.desc.text(vCard.DESC);
-    UI.profileModal.jid.text(chattingWith);
-    UI.profileModal.fn.text(vCard.FN);
-    $("#profile-modal").removeClass("modal-wrapper--hide");
-  }).catch(console.error);
-}
-
-function fixMissingPFP(og) {
-  let img = og.target ? og.target : og;
-  img.src = "img/no_pfp.svg";
-}
-
-function updateChatListItem(msg) {
-  $(".chats_list_item--active").find(".chats_list_item__info__msg").text(msg);
-}
-
-//main
-
-window.xendAPI.addNewMessageHandler(onNewMessage);
-
-//Load last chatted users
-window.xendAPI.getLocalUserJID().then((userJID) => {
-  UI.profileCard.userJID.text(userJID);
-})
-
-window.xendAPI.getLocalVCard().then(async (vCard) => {
-  if (vCard.PHOTO) {
-    UI.profileCard.userPhoto.attr("src", `data:image/png;base64, ${vCard.PHOTO}`);
-  } else {
+  
+  function loadSettings() {
+    window.xendAPI.loadSettings();
+  }
+  
+  function isSameDayMonthAndYear(date1, date2) {
+    if(date1 === undefined ||date2 === undefined){
+      return false;
+    }
+    
+    return date1.getDate() == date2.getDate() && date1.getMonth() == date2.getMonth() && date1.getFullYear() == date2.getFullYear();
+  }
+  
+  function openProfileModal() {
+    window.xendAPI.getVCard(chattingWith).then((vCard) => {
+      
+      UI.profileModal.photo.attr("src", `data:image/png;base64, ${vCard.PHOTO}`);
+      UI.profileModal.desc.text(vCard.DESC);
+      UI.profileModal.jid.text(chattingWith);
+      UI.profileModal.fn.text(vCard.FN);
+      $("#profile-modal").removeClass("modal-wrapper--hide");
+    }).catch(console.error);
+  }
+  
+  function fixMissingPFP(og) {
+    let img = og.target ? og.target : og;
+    img.src = "img/no_pfp.svg";
+  }
+  
+  function updateChatListItem(msg) {
+    $(".chats_list_item--active").find(".chats_list_item__info__msg").text(msg);
+  }
+  
+  function openDeleteChatModal() {
+    $("#delete-chat-modal").removeClass("modal-wrapper--hide");
+  }
+  
+  function deleteCurrentChat(og) {
+    window.xendAPI.deleteChatWith(chattingWith).then(()=>{
+      chattingWith = "";
+      recentMessageDate = undefined;
+      $(".chats_list_item--active").remove();
+      UI.chat.root.addClass("chat--empty");
+      UI.chat.timeline.children().remove();
+      closeModal(og)
+    }).catch(console.error);
+  }
+  
+  //main
+  
+  window.xendAPI.addNewMessageHandler(onNewMessage);
+  
+  //Load last chatted users
+  window.xendAPI.getLocalUserJID().then((userJID) => {
+    UI.profileCard.userJID.text(userJID);
+  })
+  
+  window.xendAPI.getLocalVCard().then(async (vCard) => {
+    if (vCard.PHOTO) {
+      UI.profileCard.userPhoto.attr("src", `data:image/png;base64, ${vCard.PHOTO}`);
+    } else {
 
   }
   if (vCard.FN) {
@@ -279,4 +295,3 @@ window.xendAPI.getLastChattedUsers().then((chats) => {
 }).catch((err) => {
   console.error("Couldn't get last chats. " + err);
 })
-

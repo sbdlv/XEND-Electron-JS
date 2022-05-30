@@ -5,3 +5,9 @@
     width: $size;
     object-fit: cover;
 }
+
+@mixin modal-show-animation() {
+    animation-name: modal-show;
+    animation-duration: 0.25s;
+    animation-iteration-count: 1;
+}

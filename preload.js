@@ -14,7 +14,7 @@ contextBridge.exposeInMainWorld('xendAPI', {
     getLastChattedUsers: ()=> ipcRenderer.invoke('chat:get:users'),
     getMessagesFrom: (remoteJID)=> ipcRenderer.invoke('chat:get:messages', remoteJID),
     deleteAllMessages: ()=> ipcRenderer.invoke('chat:delete:all'),
-    deleteMessagesWith: (remoteJID)=> ipcRenderer.invoke('chat:delete:with', remoteJID),
+    deleteChatWith: (remoteJID)=> ipcRenderer.invoke('chat:delete:with', remoteJID),
     getLocalUserJID: ()=> ipcRenderer.invoke('xmpp:get:user:jid'),
     deleteCurrentData: ()=> ipcRenderer.invoke('data:delete:current'),
     loadSettings: ()=> ipcRenderer.send('screen:load:settings'),

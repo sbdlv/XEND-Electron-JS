@@ -10,22 +10,23 @@
     overflow: auto;
 
     position: relative;
+    
+    @include modal-show-animation();
 
     .modal-close {
         margin-bottom: 20px;
     }
 
-    &__desc{
+    &__desc {
         color: $text-grey;
         font-style: italic;
-
     }
-    *{
+    * {
         z-index: 4;
     }
 
     //TODO: better height
-    &::after{
+    &::after {
         position: absolute;
         content: "";
 

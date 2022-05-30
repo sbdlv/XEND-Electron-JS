@@ -162,6 +162,14 @@ input::placeholder, textarea::placeholder {
   color: #7c7c7c;
 }
 
+@keyframes modal-show {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
 main {
   display: flex;
 }
@@ -516,6 +524,9 @@ main #chat, main #sidebar {
   flex-grow: 1;
   max-width: 450px;
   border: 1px solid #e6e6e6;
+  animation-name: modal-show;
+  animation-duration: 0.25s;
+  animation-iteration-count: 1;
 }
 .modal-new-chat__search {
   width: 100%;
@@ -659,6 +670,9 @@ main #chat, main #sidebar {
   max-height: 80%;
   overflow: auto;
   position: relative;
+  animation-name: modal-show;
+  animation-duration: 0.25s;
+  animation-iteration-count: 1;
 }
 .modal-profile .modal-close {
   margin-bottom: 20px;
@@ -733,6 +747,38 @@ main #chat, main #sidebar {
   border-color: #f6aab9;
   color: #8a5c65;
   font-size: 14px;
+}
+
+.modal-delete-chat {
+  background-color: #fafafa;
+  padding: 20px;
+  border-radius: 15px;
+  flex-grow: 1;
+  max-width: 600px;
+  border: 1px solid #e6e6e6;
+  max-height: 80%;
+  overflow: auto;
+  position: relative;
+  animation-name: modal-show;
+  animation-duration: 0.25s;
+  animation-iteration-count: 1;
+}
+.modal-delete-chat__title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+.modal-delete-chat__desc {
+  color: #7c7c7c;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+.modal-delete-chat__buttons {
+  display: flex;
+  justify-content: flex-end;
+}
+.modal-delete-chat__buttons button:nth-child(2) {
+  margin-left: 10px;
 }
 
 /*# sourceMappingURL=style.css.map */
