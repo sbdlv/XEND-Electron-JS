@@ -67,7 +67,7 @@ function registerHandlers() {
 }
 
 //Check for database file
-const createWindow = () => {
+const createWindow = async () => {
     // Create the browser window.
     mainWindow = new BrowserWindow({
         title: "XEND",
@@ -83,12 +83,25 @@ const createWindow = () => {
         icon: path.join(__dirname, 'img/logo.ico'),
     })
 
-    // and load the index.html of the app.
-    mainWindow.loadFile('login.html')
+    let activeUser = await localUserDAO.getActiveUser();
 
-    mainWindow.webContents.openDevTools()
+    
+    //No active user -> login
+    if(activeUser){
+        let jid = activeUser.jid.split("@");
 
-    return mainWindow;
+        let user = jid[0];
+        let domain = jid[1];
+
+
+        await handleXMPPLogin(undefined, user, domain, activeUser.password, activeUser.server, activeUser.port)
+    } else {
+        // and load the index.html of the app.
+        mainWindow.loadFile('login.html')
+    }
+
+
+    mainWindow.webContents.openDevTools();
 }
 
 async function handleDataDeleteCurrent(event) {
@@ -303,6 +316,8 @@ async function handleXMPPLogin(event, user, domain, password, server, port) {
                         {
                             jid: `${user}@${domain}`,
                             password: password,
+                            server: server,
+                            port: port,
                             active: true
                         }
                     );
@@ -376,11 +391,11 @@ async function init() {
     // Quit when all windows are closed, except on macOS. There, it's common
     // for applications and their menu bar to stay active until the user quits
     // explicitly with Cmd + Q.
-    app.on('window-all-closed', () => {
+    app.on('window-all-closed', async () => {
         if (process.platform !== 'darwin') {
             app.quit()
             if (xmppConnection != undefined) {
-                xmppConnection.close();
+                await xmppConnection.close();
             }
         }
     })
@@ -456,6 +471,8 @@ async function handleLogout(event) {
     await xmppConnection.stop();
 
     localUserDAO.setNotActive(localUserJID);
+
+    xmppConnection = undefined;
 
     mainWindow.loadFile("login.html");
 }
