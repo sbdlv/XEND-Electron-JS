@@ -99,9 +99,7 @@ async function handleDataDeleteCurrent(event) {
 }
 
 async function handleChatDeleteAll() {
-    let res = await chatDAO.deleteFromLocalUser(localUserID);
-    console.log(res);
-
+    await chatDAO.deleteFromLocalUser(localUserID);
     return true;
 }
 
