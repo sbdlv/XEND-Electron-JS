@@ -9,6 +9,9 @@
         border-radius: $border-radius;
         height: 200px;
         width: 200px;
+        box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 12px;
+        object-fit: cover;
+
     }
     &__pfp-buttons {
         display: flex;

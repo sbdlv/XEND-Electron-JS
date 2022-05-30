@@ -607,6 +607,9 @@ main #chat, main #sidebar {
 .tab--active {
   display: block;
 }
+.tab#tab-profile {
+  margin-top: 12px;
+}
 
 .date-line {
   text-align: center;
@@ -624,6 +627,8 @@ main #chat, main #sidebar {
   border-radius: 15px;
   height: 200px;
   width: 200px;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 12px;
+  object-fit: cover;
 }
 .user-pfp-name__pfp-buttons {
   display: flex;
