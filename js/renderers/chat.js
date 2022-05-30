@@ -30,6 +30,8 @@ let UI = {
 function onNewMessage(event, msg) {
   let list_item = $(`.chats_list_item[data-user="${msg.from}"]`);
 
+  let msgDate = new Date();
+
   //Create or update list item
   if (list_item.length) {
     list_item.find(".chats_list_item__info__msg").text(msg.body);
@@ -41,16 +43,16 @@ function onNewMessage(event, msg) {
   }
 
   //Create date-line if the message is from a different day from the previous one
-  if (!isSameDayMonthAndYear(recentMessageDate, new Date())) {
+  if (!isSameDayMonthAndYear(recentMessageDate, msgDate)) {
     UI.chat.timeline.append(
-      getDateTimeline(new Date())
+      getDateTimeline(msgDate)
     )
   }
 
   //If the message is from the current chattingWith, then show the message on the timeline
   if (chattingWith == msg.from) {
     UI.chat.timeline.append(
-      getChatBubble(msg.body, false)
+      getChatBubble(msg.body, false, msgDate)
     )
   }
 
@@ -116,7 +118,7 @@ async function updateChatUI(remoteJID) {
         lastMessageDate = messageDate;
       }
 
-      UI.chat.timeline.append(getChatBubble(message.body, message.sentLocally));
+      UI.chat.timeline.append(getChatBubble(message.body, message.sentLocally, messageDate));
     });
 
     UI.chat.timeline.scrollTop(UI.chat.timeline[0].scrollHeight);
@@ -139,8 +141,11 @@ async function getVCard(user_at) {
   return await window.xendAPI.getVCard(user_at);
 }
 
-function getChatBubble(msg, isLocalMessage = false) {
-  return $("<div></div>").text(msg).addClass("chat_bubble").addClass(isLocalMessage ? "" : "chat_bubble--remote");
+function getChatBubble(msg, isLocalMessage = false, date = new Date()) {
+  return $("<div></div>").addClass("chat_bubble").addClass(isLocalMessage ? "" : "chat_bubble--remote").append(
+    $("<div></div>").text(msg).addClass("chat_bubble__body"),
+    $("<div></div>").text(`${date.getHours()}:${date.getMinutes()}`).addClass("chat_bubble__date"),
+    );
 }
 
 function updateChattingWith(user_at, full_name = "Temp") {
@@ -161,7 +166,7 @@ function sendMessage(event) {
     }
     
     UI.chat.timeline.append(
-      getChatBubble(msgBody, true)
+      getChatBubble(msgBody, true, date)
     )
     
     recentMessageDate = date;

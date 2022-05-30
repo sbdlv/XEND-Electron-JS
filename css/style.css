@@ -297,6 +297,15 @@ main #chat, main #sidebar {
   color: black;
   align-self: flex-start;
 }
+.chat_bubble--remote .chat_bubble__date {
+  color: #7c7c7c;
+}
+.chat_bubble__date {
+  font-size: 11px;
+  text-align: right;
+  color: #eaecee;
+  margin-top: 4px;
+}
 
 .profile_card {
   width: calc(100% - 18px - 16px);

@@ -16,6 +16,17 @@
         color: black;
 
         align-self: flex-start;
+
+        .chat_bubble__date{
+            color: $text-grey;
+        }
+    }
+
+    &__date{
+        font-size: 11px;
+        text-align: right;
+        color: $bubble-remote;
+        margin-top: 4px;
     }
 
 }
