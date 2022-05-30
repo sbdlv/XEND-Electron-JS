@@ -49,8 +49,4 @@ module.exports = class {
     async get(local_id, remote_jid) {
         return await this.db.get(`SELECT * FROM ${TABLE_NAME} WHERE local_user = ? AND remote_jid = ?`, local_id, remote_jid);
     }
-
-    async deleteFromLocalUser(local_id) {
-        return await this.db.get(`SELECT * FROM ${TABLE_NAME} WHERE local_user = ?`, local_id);
-    }
 }

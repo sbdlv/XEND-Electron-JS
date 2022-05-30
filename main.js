@@ -350,6 +350,8 @@ async function init() {
         messageDAO = new (require("./js/db/message"))(db);
         chatDAO = new (require("./js/db/chat"))(db);
         localUserDAO = new (require("./js/db/local_user"))(db);
+
+        await db.run('PRAGMA foreign_keys = on');
     } catch (error) {
         dialog.showErrorBox("Fallo con la base de datos", "No se ha podido establecer una conexión.");
         logger.error("Couldn't make connection with the DB. " + error);
