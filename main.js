@@ -61,6 +61,7 @@ function registerHandlers() {
     ipcMain.handle("xmpp:login", handleXMPPLogin);
     ipcMain.handle("xmpp:logout", handleLogout);
     ipcMain.handle("xmpp:prompt:vcard:image", handlePromptVCardImage);
+    ipcMain.handle("data:delete:current", handleDataDeleteCurrent);
     ipcMain.on("screen:load:settings", onScreenLoadSettings);
     ipcMain.on("screen:load:chat", onScreenLoadChat);
 }
@@ -90,9 +91,16 @@ const createWindow = () => {
     return mainWindow;
 }
 
+async function handleDataDeleteCurrent(event) {
+    await localUserDAO.delete(localUserID);
+    handleLogout(undefined);
+
+    return true;
+}
+
 async function handleChatDeleteAll() {
-    await messageDAO.deleteAll();
-    await chatDAO.deleteAll();
+    let res = await chatDAO.deleteFromLocalUser(localUserID);
+    console.log(res);
 
     return true;
 }
@@ -102,7 +110,6 @@ async function handleChatDeleteWith(event, remoteJID) {
 
     if (chatID !== undefined) {
         chatID = chatID.id;
-        await messageDAO.deleteFromChat(chatID);
         await chatDAO.delete(chatID);
     }
 

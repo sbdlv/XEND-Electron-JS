@@ -37,6 +37,6 @@ module.exports = class {
     }
 
     async create(){
-        return await this.db.exec("CREATE TABLE IF NOT EXISTS message (id INTEGER PRIMARY KEY AUTOINCREMENT, chat INTEGER, body TEXT, date integer, sentLocally INTEGER);");
+        return await this.db.exec("CREATE TABLE IF NOT EXISTS message (id INTEGER PRIMARY KEY AUTOINCREMENT, chat INTEGER, body TEXT, date integer, sentLocally INTEGER, CONSTRAINT fk_chat FOREIGN KEY (chat) REFERENCES chat(id) ON DELETE CASCADE );");
     }
 }

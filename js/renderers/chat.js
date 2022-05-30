@@ -153,9 +153,9 @@ function sendMessage(event) {
   if (event.key === "Enter") {
     let msgBody = UI.chat.input.val();
     let date = new Date();
-
+    
     console.log(window.xendAPI.sendMsg(chattingWith, msgBody));
-
+    
     if(!isSameDayMonthAndYear(date, recentMessageDate)){
       UI.chat.timeline.append(getDateTimeline(date));
     }
@@ -163,7 +163,9 @@ function sendMessage(event) {
     UI.chat.timeline.append(
       getChatBubble(msgBody, true)
     )
-
+    
+    recentMessageDate = date;
+    
     UI.chat.input.val("");
     updateChatListItem(msgBody);
   }
@@ -209,6 +211,10 @@ function loadSettings() {
 }
 
 function isSameDayMonthAndYear(date1, date2) {
+  if(date1 === undefined ||date2 === undefined){
+    return false;
+  }
+
   return date1.getDate() == date2.getDate() && date1.getMonth() == date2.getMonth() && date1.getFullYear() == date2.getFullYear();
 }
 

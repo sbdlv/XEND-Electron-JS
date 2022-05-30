@@ -76,3 +76,10 @@ function deleteAllChats() {
         showAlert("error", "No se han podido eliminar los chats.")
     });
 }
+
+function deleteData() {
+    window.xendAPI.deleteCurrentData().catch((err)=>{
+        console.error(err)
+        showAlert("error", "No se han podido eliminar los datos del usuario actual.")
+    });
+}

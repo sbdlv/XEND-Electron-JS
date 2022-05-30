@@ -24,12 +24,16 @@ module.exports = class {
         return await this.db.run(`DELETE FROM ${TABLE_NAME} WHERE id = ?`, chat_id);
     }
 
+    async deleteFromLocalUser(local_user_id) {
+        return await this.db.run(`DELETE FROM ${TABLE_NAME} WHERE local_user = ?`, local_user_id);
+    }
+
     async deleteAll() {
         return await this.db.run(`DELETE FROM ${TABLE_NAME}`);
     }
 
     async create() {
-        await this.db.exec("CREATE TABLE IF NOT EXISTS chat ( id INTEGER PRIMARY KEY AUTOINCREMENT, local_user INTEGER, remote_jid TEXT, UNIQUE(remote_jid, local_user));");
+        await this.db.exec("CREATE TABLE IF NOT EXISTS chat ( id INTEGER PRIMARY KEY AUTOINCREMENT, local_user INTEGER, remote_jid TEXT, UNIQUE(remote_jid, local_user), CONSTRAINT fk_user FOREIGN KEY (local_user) REFERENCES local_user(id) ON DELETE CASCADE );");
     }
 
     async getChatsAndLastMessage() {
@@ -44,5 +48,9 @@ module.exports = class {
      */
     async get(local_id, remote_jid) {
         return await this.db.get(`SELECT * FROM ${TABLE_NAME} WHERE local_user = ? AND remote_jid = ?`, local_id, remote_jid);
+    }
+
+    async deleteFromLocalUser(local_id) {
+        return await this.db.get(`SELECT * FROM ${TABLE_NAME} WHERE local_user = ?`, local_id);
     }
 }

@@ -50,5 +50,8 @@ module.exports = class {
         return await this.db.run(`UPDATE ${TABLE_NAME} SET active = 0 WHERE jid = ?`, jid);
     }
 
+    async delete(local_user_id) {
+        return await this.db.run(`DELETE FROM ${TABLE_NAME} WHERE id = ?`, local_user_id);
+    }
 
 }
