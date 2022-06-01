@@ -282,13 +282,26 @@ async function startNewChat(event) {
   }
 })
 
+//TODO: find a better solution
+async function delayedSetPFP(userJID, chatListItem){
+  let vCard1 = await window.xendAPI.getVCard(userJID);
+  console.log(userJID);
+  chatListItem.find("img").attr("src", `data:image/png;base64, ${vCard1.PHOTO}`);
+}
+
 window.xendAPI.getLastChattedUsers().then((chats) => {
   console.log(`Loaded ${chats.length} chat/s`);
+  
 
-  chats.forEach(chat => {
+  chats.forEach((chat) => {
     if (chat.id != null) {
-      UI.recentChats.prepend(
-        getChatListItem(chat.remote_jid, chat.body, false)
+
+      let chatListItem = getChatListItem(chat.remote_jid, chat.body, false);
+
+      delayedSetPFP(chat.remote_jid, chatListItem);
+
+      UI.recentChats.append(
+        chatListItem
       )
     }
   });

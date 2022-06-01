@@ -83,6 +83,8 @@ const createWindow = async () => {
         icon: path.join(__dirname, 'img/logo.ico'),
     })
 
+    mainWindow.setMenu(null)
+
     let activeUser = await localUserDAO.getActiveUser();
 
     
@@ -200,6 +202,7 @@ async function handleChatSend(event, remoteUser, msg) {
  * @see https://xmpp.org/extensions/xep-0054.html#sect-idm45828960584512
  */
 async function handleGetVCard(event, user) {
+    logger.info("Querying vCard for " + user);
     let vCard = await xmppConnection.sendReceive(xml(
         "iq",
         {
@@ -344,7 +347,7 @@ async function handleXMPPLogin(event, user, domain, password, server, port) {
 }
 
 async function handleChatGetLastUsers(event) {
-    return await chatDAO.getChatsAndLastMessage();
+    return await chatDAO.getChatsAndLastMessage(localUserID);
 }
 
 //Init

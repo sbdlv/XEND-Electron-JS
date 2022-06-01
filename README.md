@@ -1,25 +1,6 @@
-# XEND-Electron-JS
+![Xend logo](img/logo_and_name.svg)
 
-## DB
+XEND Electron is a XMPP available for all desktop platforms (Windwos, Linux and MacOS) powered by Electron.js and the XMPP protocol.
 
-```sql
-CREATE TABLE local_user (
-	id INTEGER PRIMARY KEY AUTOINCREMENT,
-  	jid TEXT UNIQUE
-);
-
-CREATE TABLE chat (
-	id INTEGER PRIMARY KEY AUTOINCREMENT,
-  	local_user INTEGER,
-  	remote_jid TEXT,
-  	UNIQUE(remote_jid, local_user)
-);
-
-CREATE TABLE message (
-	id INTEGER PRIMARY KEY AUTOINCREMENT,
-  	chat INTEGER,
-  	body TEXT,
-  	date integer,
-  	sentLocally INTEGER
-);
-```
+# Advise
+This software has been made for educational purposes. By using it, you accept that the author is not responsable of any possible damages.

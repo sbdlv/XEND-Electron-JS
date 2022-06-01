@@ -36,8 +36,8 @@ module.exports = class {
         await this.db.exec("CREATE TABLE IF NOT EXISTS chat ( id INTEGER PRIMARY KEY AUTOINCREMENT, local_user INTEGER, remote_jid TEXT, UNIQUE(remote_jid, local_user), CONSTRAINT fk_user FOREIGN KEY (local_user) REFERENCES local_user(id) ON DELETE CASCADE );");
     }
 
-    async getChatsAndLastMessage() {
-        return await this.db.all("SELECT DISTINCT chat.id, chat.remote_jid, message.body, message.sentLocally, MAX(date) as date FROM chat LEFT JOIN message ON chat.id = message.chat ORDER BY date DESC");
+    async getChatsAndLastMessage(local_user_id) {
+        return await this.db.all("SELECT DISTINCT chat.id, chat.remote_jid, message.body, message.sentLocally, MAX(date) as date FROM chat LEFT JOIN message ON chat.id = message.chat WHERE chat.local_user = ? GROUP BY remote_jid ORDER BY date DESC", local_user_id);
     }
 
     /**

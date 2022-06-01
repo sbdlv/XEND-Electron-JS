@@ -25,14 +25,14 @@
                         <div class="settings-entry-group__title">General</div>
                         <div class="settings-entry-group__entries">
                             <button class="pill-button pill-button--active" data-tab="profile">Perfil</button>
-                            <button class="pill-button" data-tab="settings">Ajustes</button>
+                            <button class="pill-button" data-tab="settings">Datos</button>
                         </div>
                     </div>
                 </div>
                 <div class="settings-layout__views">
                     <div class="tab tab--active" id="tab-profile">
                         <div class="user-pfp-name">
-                            <img class="user-pfp-name__pfp" id="photo-img">
+                            <img class="user-pfp-name__pfp" id="photo-img" onerror="fixMissingPFP(this)">
                             <div class="user-pfp-name__pfp-buttons">
                                 <button onclick="editPFP()" class="icon_button"><svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6"
                                         fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">

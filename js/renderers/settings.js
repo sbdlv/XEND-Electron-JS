@@ -10,6 +10,11 @@ let UI = {
     }
 }
 
+function fixMissingPFP(og) {
+    let img = og.target ? og.target : og;
+    img.src = "img/no_pfp.svg";
+}
+
 function save() {
     let vCard = {
         FN: $("#fn").val(),
@@ -17,9 +22,9 @@ function save() {
         PHOTO_BASE_64: $("#photo").val()
     }
 
-    window.xendAPI.setVCard(vCard).then(()=>{
-        showAlert("success", "Perfil actualizado."); 
-    }).catch((err)=>{
+    window.xendAPI.setVCard(vCard).then(() => {
+        showAlert("success", "Perfil actualizado.");
+    }).catch((err) => {
         console.error(err);
         showAlert("error", "Error al actualizar el perfil.")
     });
@@ -42,7 +47,7 @@ function loadTab(event) {
 
 //main
 //Load and display current vCard
-window.xendAPI.getVCard("usuario1@xend").then((vCard) => {
+window.xendAPI.getLocalVCard().then((vCard) => {
     console.log(vCard);
     UI.vCard.FN.val(vCard.FN);
     UI.vCard.DESC.val(vCard.DESC);
@@ -69,16 +74,16 @@ function logout() {
 }
 
 function deleteAllChats() {
-    window.xendAPI.deleteAllMessages().then(()=>{
+    window.xendAPI.deleteAllMessages().then(() => {
         showAlert("success", "Chats eliminados correctamente.")
-    }).catch((err)=>{
+    }).catch((err) => {
         console.error(err)
         showAlert("error", "No se han podido eliminar los chats.")
     });
 }
 
 function deleteData() {
-    window.xendAPI.deleteCurrentData().catch((err)=>{
+    window.xendAPI.deleteCurrentData().catch((err) => {
         console.error(err)
         showAlert("error", "No se han podido eliminar los datos del usuario actual.")
     });
