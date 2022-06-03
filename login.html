@@ -15,23 +15,23 @@
         </div>
         <div class="form-group">
             <label for="username">Usuario</label>
-            <input type="text" placeholder="user@xend.org" id="user-and-domain" value="usuario1@xend">
+            <input type="text" placeholder="user@dominio.com" id="user-and-domain" autocomplete="off">
         </div>
         <div class="form-group">
             <label for="username">Contraseña</label>
             <div class="input-extra-button">
-                <input type="password" placeholder="" id="password" value="usuario">
+                <input type="password" placeholder="" id="password" value="" autocomplete="off">
                 <!-- <div class="icon_button show-password"></div> -->
             </div>
         </div>
         <div class="server-fields">
             <div class="form-group">
                 <label for="username">Servidor</label>
-                <input type="text" placeholder="xend.org" id="server" value="localhost">
+                <input type="text" placeholder="dominio.com" id="server" value="" autocomplete="off">
             </div>
             <div class="form-group">
                 <label for="username">Puerto</label>
-                <input type="number" placeholder="5222" min="1" id="port" value="5222">
+                <input type="number" placeholder="5222" min="1" id="port" value="5222" autocomplete="off">
             </div>
         </div>
         <button class="btn btn--primary" onclick="login(this)">Iniciar sesión</button>

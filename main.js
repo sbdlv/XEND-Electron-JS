@@ -103,7 +103,7 @@ const createWindow = async () => {
     }
 
 
-    mainWindow.webContents.openDevTools();
+    //mainWindow.webContents.openDevTools();
 }
 
 async function handleDataDeleteCurrent(event) {
