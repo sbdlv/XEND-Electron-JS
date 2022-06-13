@@ -88,3 +88,8 @@ function deleteData() {
         showAlert("error", "No se han podido eliminar los datos del usuario actual.")
     });
 }
+
+function deletePhoto() {
+    UI.vCard.PHOTO.val("");
+    UI.vCard.PHOTO_IMG.attr("src", "");
+}
