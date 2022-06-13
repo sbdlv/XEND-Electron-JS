@@ -27,7 +27,7 @@ let UI = {
   }
 }
 
-function onNewMessage(event, msg) {
+async function onNewMessage(event, msg) {
   let list_item = $(`.chats_list_item[data-user="${msg.from}"]`);
 
   let msgDate = new Date();
@@ -37,8 +37,12 @@ function onNewMessage(event, msg) {
     list_item.find(".chats_list_item__info__msg").text(msg.body);
     list_item.prependTo(UI.recentChats);
   } else {
+
+
+    let vCard = await getVCard(msg.from);
+
     UI.recentChats.prepend(
-      getChatListItem(msg.from, msg.body)
+      getChatListItem(msg.from, msg.body, false, vCard.PHOTO)
     )
   }
 
