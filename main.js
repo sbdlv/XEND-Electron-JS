@@ -332,6 +332,8 @@ async function handleXMPPLogin(event, user, domain, password, server, port) {
                 }
             } else {
                 localUserID = localUserID.id;
+
+                await localUserDAO.setActive(localUserID);
             }
         } catch (error) {
             logger.error("Error inserting local user. " + error)
