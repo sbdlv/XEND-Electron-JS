@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^17.0.0"
+    "electron": "^21.0.0"
   },
   "dependencies": {
     "@xmpp/client": "^0.13.0",
