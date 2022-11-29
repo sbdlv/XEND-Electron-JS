@@ -27,7 +27,7 @@ let UI = {
   }
 }
 
-function onNewMessage(event, msg) {
+async function onNewMessage(event, msg) {
   let list_item = $(`.chats_list_item[data-user="${msg.from}"]`);
 
   let msgDate = new Date();
@@ -37,8 +37,12 @@ function onNewMessage(event, msg) {
     list_item.find(".chats_list_item__info__msg").text(msg.body);
     list_item.prependTo(UI.recentChats);
   } else {
+
+
+    let vCard = await getVCard(msg.from);
+
     UI.recentChats.prepend(
-      getChatListItem(msg.from, msg.body)
+      getChatListItem(msg.from, msg.body, false, vCard.PHOTO)
     )
   }
 
@@ -282,29 +286,24 @@ async function startNewChat(event) {
   }
 })
 
-//TODO: find a better solution
-async function delayedSetPFP(userJID, chatListItem){
-  let vCard1 = await window.xendAPI.getVCard(userJID);
-  console.log(userJID);
-  chatListItem.find("img").attr("src", `data:image/png;base64, ${vCard1.PHOTO}`);
-}
-
-window.xendAPI.getLastChattedUsers().then((chats) => {
+window.xendAPI.getLastChattedUsers().then(async (chats) => {
   console.log(`Loaded ${chats.length} chat/s`);
   
 
-  chats.forEach((chat) => {
+  for (let i = 0; i < chats.length; i++) {
+    const chat = chats[i];
+
     if (chat.id != null) {
 
-      let chatListItem = getChatListItem(chat.remote_jid, chat.body, false);
+      let vCard = await window.xendAPI.getVCard(chat.remote_jid);
 
-      delayedSetPFP(chat.remote_jid, chatListItem);
+      let chatListItem = getChatListItem(chat.remote_jid, chat.body, false, vCard.PHOTO);
 
       UI.recentChats.append(
         chatListItem
       )
-    }
-  });
+    } 
+  }
 }).catch((err) => {
   console.error("Couldn't get last chats. " + err);
 })
